@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Role Colors -->
+    <color name="primary">#6366F1</color> <!-- Indigo -->
+    <color name="secondary">#22D3EE</color> <!-- Soft Cyan -->
+    <color name="accent">#F87171</color> <!-- Warm Coral -->
+    <color name="background">#FAFAFA</color> <!-- Off White -->
+    <color name="surface">#EDE9FE</color> <!-- Soft Lavender -->
+    <color name="text_primary">#1F2937</color> <!-- Gunmetal -->
+    <color name="success">#10B981</color> <!-- Emerald Green -->
+    <color name="warning">#FBBF24</color> <!-- Amber -->
+    <color name="danger">#EF4444</color> <!-- Red -->
 </resources>
