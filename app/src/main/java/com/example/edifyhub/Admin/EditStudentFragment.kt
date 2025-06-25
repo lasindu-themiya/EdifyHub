@@ -1,4 +1,4 @@
-package com.example.edifyhub.AdminStudentManage
+package com.example.edifyhub.Admin
 
 import android.os.Bundle
 import android.view.LayoutInflater
