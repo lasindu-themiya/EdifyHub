@@ -1,0 +1,71 @@
+<!-- res/layout/item_student.xml -->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_marginBottom="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="30dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+
+        >
+
+        <ImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_profile"
+            android:background="@drawable/profile_circle_bg"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="16dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Student Name"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="student@email.com"
+                android:textColor="@color/primary"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivEdit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_pen"
+            android:contentDescription="Edit"
+
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/ivDelete"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_delete"
+            android:contentDescription="Delete"
+            />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
