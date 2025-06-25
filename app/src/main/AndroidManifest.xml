@@ -13,7 +13,7 @@
         android:theme="@style/Theme.EdifyHub"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".passwordReset.EnterEmailActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".passwordReset.EnterOtpActivity" />
+        <activity android:name=".passwordReset.ResetPasswordActivity" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
