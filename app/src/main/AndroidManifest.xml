@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -13,9 +12,9 @@
         android:theme="@style/Theme.EdifyHub"
         tools:targetApi="31">
 
-        <!-- Register AdminApprovalActivity only once -->
+        <!-- ✅ Set CreateQuizActivity as launcher -->
         <activity
-            android:name=".AdminAproveTeacher.AdminApprovalActivity"
+            android:name=".teachercreatequiz.CreateQuizActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,9 +23,9 @@
         </activity>
 
         <!-- Other activities -->
+        <activity android:name=".AdminAproveTeacher.AdminApprovalActivity" />
         <activity android:name=".teacherProfileManage.TeacherProfileActivity" />
         <activity android:name=".teacherProfileManage.ManageInstituteActivity" />
 
     </application>
-
 </manifest>
