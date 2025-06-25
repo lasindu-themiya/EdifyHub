@@ -10,4 +10,5 @@
     <color name="success">#10B981</color> <!-- Emerald Green -->
     <color name="warning">#FBBF24</color> <!-- Amber -->
     <color name="danger">#EF4444</color> <!-- Red -->
+    <color name="white">#FFF</color>
 </resources>
