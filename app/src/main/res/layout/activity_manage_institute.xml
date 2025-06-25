@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:paddingTop="32dp">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Manage Institute"
+        android:textColor="@color/primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:fontFamily="sans-serif-medium" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal"
+            android:background="@color/surface"
+            android:elevation="4dp"
+            android:layout_margin="16dp"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:layout_gravity="center">
+
+            <!-- Institute Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Institute Name"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etInstituteName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter institute name"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Address -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etInstituteAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter address"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Description -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etInstituteDescription"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="Enter description"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Location -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etInstituteLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter location"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Contact -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Contact Number"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etInstituteContact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter contact number"
+                android:inputType="phone"
+                android:background="@drawable/edittext_background"
+                android:textColor="@color/text_primary"
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveInstitute"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Institute"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:padding="14dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/primary" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

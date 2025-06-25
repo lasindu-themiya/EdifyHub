@@ -15,6 +15,9 @@
 
         <!-- Register AdminApprovalActivity -->
         <activity android:name=".AdminApprovalActivity" />
+        <activity android:name=".TeacherProfileActivity" />
+        <activity android:name=".ManageInstituteActivity" />
+
 
         <!-- MainActivity is the launcher -->
         <activity

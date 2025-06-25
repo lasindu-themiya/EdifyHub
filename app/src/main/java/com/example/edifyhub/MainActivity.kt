@@ -8,11 +8,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Launch AdminApprovalActivity
-        val intent = Intent(this, AdminApprovalActivity::class.java)
+        // Immediately start TeacherProfileActivity
+        val intent = Intent(this, TeacherProfileActivity::class.java)
         startActivity(intent)
 
-        // Optional: finish MainActivity if not needed
+        // Optionally close this activity if you don't want it in back stack
         finish()
     }
 }
