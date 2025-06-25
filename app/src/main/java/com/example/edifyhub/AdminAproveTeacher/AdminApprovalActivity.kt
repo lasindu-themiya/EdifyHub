@@ -1,11 +1,15 @@
-package com.example.edifyhub
+package com.example.edifyhub.AdminAproveTeacher
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.widget.Toolbar
+import com.example.edifyhub.AdminNavBar.DrawerMenuHandler
+import com.example.edifyhub.R
+import com.example.edifyhub.AdminAproveTeacher.TeacherAdapter
+import com.example.edifyhub.AdminAproveTeacher.TeacherSignupRequestModel
 import com.google.android.material.navigation.NavigationView
 
 class AdminApprovalActivity : AppCompatActivity() {
@@ -34,9 +38,27 @@ class AdminApprovalActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val sampleRequests = mutableListOf(
-            TeacherSignupRequestModel("1", "John Doe", "john@example.com", "Physics", "ABC Institute"),
-            TeacherSignupRequestModel("2", "Jane Smith", "jane@example.com", "Mathematics", "XYZ Academy"),
-            TeacherSignupRequestModel("3", "Ayesha Khan", "ayesha@example.com", "Biology", "Brilliant College")
+            TeacherSignupRequestModel(
+                "1",
+                "John Doe",
+                "john@example.com",
+                "Physics",
+                "ABC Institute"
+            ),
+            TeacherSignupRequestModel(
+                "2",
+                "Jane Smith",
+                "jane@example.com",
+                "Mathematics",
+                "XYZ Academy"
+            ),
+            TeacherSignupRequestModel(
+                "3",
+                "Ayesha Khan",
+                "ayesha@example.com",
+                "Biology",
+                "Brilliant College"
+            )
         )
 
         adapter = TeacherAdapter(

@@ -1,4 +1,4 @@
-package com.example.edifyhub
+package com.example.edifyhub.AdminAproveTeacher
 
 data class TeacherSignupRequestModel(
     val id: String,

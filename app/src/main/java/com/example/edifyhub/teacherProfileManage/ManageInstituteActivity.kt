@@ -1,9 +1,10 @@
-package com.example.edifyhub
+package com.example.edifyhub.teacherProfileManage
 
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.edifyhub.R
 import com.google.android.material.button.MaterialButton
 
 class ManageInstituteActivity : AppCompatActivity() {

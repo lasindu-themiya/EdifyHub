@@ -1,13 +1,16 @@
-package com.example.edifyhub
+package com.example.edifyhub.AdminNavBar
 
 import android.content.Context
 import android.content.Intent
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.edifyhub.AdminAproveTeacher.AdminApprovalActivity
+import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
-import android.widget.Toast
 
 class DrawerMenuHandler(
     private val context: Context,
@@ -17,7 +20,7 @@ class DrawerMenuHandler(
 ) : NavigationView.OnNavigationItemSelectedListener {
 
     private val toggle: ActionBarDrawerToggle = ActionBarDrawerToggle(
-        context as androidx.appcompat.app.AppCompatActivity,
+        context as AppCompatActivity,
         drawerLayout,
         toolbar,
         R.string.navigation_drawer_open,

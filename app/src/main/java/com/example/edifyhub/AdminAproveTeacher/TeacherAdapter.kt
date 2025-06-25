@@ -1,4 +1,4 @@
-package com.example.edifyhub
+package com.example.edifyhub.AdminAproveTeacher
 
 import android.app.AlertDialog
 import android.view.LayoutInflater
@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.edifyhub.R
+import com.example.edifyhub.AdminAproveTeacher.TeacherSignupRequestModel
 
 class TeacherAdapter(
     private val teacherList: MutableList<TeacherSignupRequestModel>,
