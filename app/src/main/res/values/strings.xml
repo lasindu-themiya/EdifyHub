@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">EdifyHub</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open navigation</string>
+    <string name="navigation_drawer_close">Close navigation</string>
+    <string name="user_avatar">User profile picture</string>
 </resources>
