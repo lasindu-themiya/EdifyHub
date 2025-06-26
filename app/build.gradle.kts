@@ -49,5 +49,4 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation(libs.mpandroidchart)
-}
+    implementation(libs.mpandroidchart)}
