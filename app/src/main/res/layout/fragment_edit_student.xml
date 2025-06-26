@@ -1,0 +1,79 @@
+<!-- res/layout/fragment_edit_student.xml -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Student"
+            android:textColor="@color/primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name"
+            android:textColor="@color/text_primary"
+            android:backgroundTint="@color/secondary"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/etAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Age"
+            android:inputType="number"
+            android:textColor="@color/text_primary"
+            android:backgroundTint="@color/secondary"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/etMobile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mobile Number"
+            android:inputType="phone"
+            android:textColor="@color/text_primary"
+            android:backgroundTint="@color/secondary"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/etStream"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="AL Stream"
+            android:textColor="@color/text_primary"
+            android:backgroundTint="@color/secondary"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/text_primary"
+            android:backgroundTint="@color/secondary"
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:backgroundTint="@color/success"
+            android:textColor="@color/background"/>
+    </LinearLayout>
+</ScrollView>
