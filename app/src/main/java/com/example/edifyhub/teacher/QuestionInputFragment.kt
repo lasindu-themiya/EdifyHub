@@ -1,4 +1,4 @@
-package com.example.edifyhub.teachercreatequiz
+package com.example.edifyhub.teacher
 
 import android.content.res.Resources
 import android.graphics.Typeface

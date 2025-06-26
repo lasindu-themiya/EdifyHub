@@ -6,9 +6,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.edifyhub.admin.TeacherAdapter
-import com.example.edifyhub.admin.TeacherSignupRequestModel
-import com.example.edifyhub.admin.DrawerMenuHandler
 import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
 

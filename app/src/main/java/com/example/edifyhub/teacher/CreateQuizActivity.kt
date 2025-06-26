@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.example.edifyhub.R
-import com.example.edifyhub.teachercreatequiz.QuestionInputFragment
+import com.example.edifyhub.teacher.QuestionInputFragment
 
 class CreateQuizActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

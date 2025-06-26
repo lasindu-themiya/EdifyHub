@@ -49,7 +49,7 @@ class DrawerMenuHandler(
         when (item.itemId) {
             R.id.nav_dashboard -> {
                 Toast.makeText(context, "Dashboard clicked", Toast.LENGTH_SHORT).show()
-                // TODO: Start dashboard activity here
+                context.startActivity(Intent(context, AdminDashboardActivity::class.java))
             }
             R.id.nav_teachers -> {
                 Toast.makeText(context, "Teachers clicked", Toast.LENGTH_SHORT).show()
