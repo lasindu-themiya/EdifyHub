@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:layout_marginTop="60dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Student Profile Update"
+        android:textColor="@color/primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:fontFamily="sans-serif-medium" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal"
+            android:background="@color/surface"
+            android:elevation="4dp"
+            android:layout_margin="16dp"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:layout_gravity="center">
+
+            <!-- Profile Image with Edit Icon -->
+            <FrameLayout
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginBottom="24dp">
+
+                <ImageView
+                    android:id="@+id/imageProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/baseline_person_24"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/circle_background"
+                    android:contentDescription="Profile Picture" />
+
+                <ImageView
+                    android:id="@+id/btnEditProfilePic"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="4dp"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_edit"
+                    android:background="@drawable/edit_icon_bg"
+                    android:contentDescription="Edit Profile Picture" />
+            </FrameLayout>
+
+            <!-- Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your full name"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Age -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Age"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your age"
+                android:inputType="number"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Mobile No -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mobile No"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etMobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your mobile number"
+                android:inputType="phone"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- AL Stream -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="AL Stream"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+            <EditText
+                android:id="@+id/etALStream"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your AL stream"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:minHeight="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Profile"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:padding="14dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/primary" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
