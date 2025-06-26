@@ -1,4 +1,4 @@
-package com.example.edifyhub.Admin
+package com.example.edifyhub.admin
 
 import android.app.AlertDialog
 import android.app.Dialog
