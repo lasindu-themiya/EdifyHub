@@ -3,7 +3,7 @@ package com.example.edifyhub
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.edifyhub.teacherProfileManage.TeacherProfileActivity
+import com.example.edifyhub.teacher.TeacherProfileActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

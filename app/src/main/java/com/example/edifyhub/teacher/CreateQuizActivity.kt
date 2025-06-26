@@ -1,10 +1,10 @@
-package com.example.edifyhub.teachercreatequiz
-
+package com.example.edifyhub.teacher
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.example.edifyhub.R
+import com.example.edifyhub.teachercreatequiz.QuestionInputFragment
 
 class CreateQuizActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

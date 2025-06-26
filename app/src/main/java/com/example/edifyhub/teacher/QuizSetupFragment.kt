@@ -1,4 +1,4 @@
-package com.example.edifyhub.teachercreatequiz
+package com.example.edifyhub.teacher
 
 import android.os.Bundle
 import android.view.LayoutInflater

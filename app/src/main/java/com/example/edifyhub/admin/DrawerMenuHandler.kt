@@ -1,4 +1,4 @@
-package com.example.edifyhub.AdminNavBar
+package com.example.edifyhub.admin
 
 import android.content.Context
 import android.content.Intent
@@ -8,7 +8,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.edifyhub.AdminAproveTeacher.AdminApprovalActivity
 import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
 

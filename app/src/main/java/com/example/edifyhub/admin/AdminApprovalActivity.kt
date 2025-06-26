@@ -1,4 +1,4 @@
-package com.example.edifyhub.AdminAproveTeacher
+package com.example.edifyhub.admin
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,10 +6,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.edifyhub.AdminNavBar.DrawerMenuHandler
+import com.example.edifyhub.admin.TeacherAdapter
+import com.example.edifyhub.admin.TeacherSignupRequestModel
+import com.example.edifyhub.admin.DrawerMenuHandler
 import com.example.edifyhub.R
-import com.example.edifyhub.AdminAproveTeacher.TeacherAdapter
-import com.example.edifyhub.AdminAproveTeacher.TeacherSignupRequestModel
 import com.google.android.material.navigation.NavigationView
 
 class AdminApprovalActivity : AppCompatActivity() {

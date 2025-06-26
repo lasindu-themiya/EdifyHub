@@ -1,4 +1,4 @@
-package com.example.edifyhub.teacherProfileManage
+package com.example.edifyhub.teacher
 
 import android.os.Bundle
 import android.widget.EditText

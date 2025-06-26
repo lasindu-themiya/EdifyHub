@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -14,18 +15,17 @@
 
         <!-- ✅ Set CreateQuizActivity as launcher -->
         <activity
-            android:name=".teachercreatequiz.CreateQuizActivity"
+            android:name=".teacher.TeacherProfileActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- Other activities -->
+        <activity android:name=".admin.AdminApprovalActivity" />
 
-        <!-- Other activities -->
-        <activity android:name=".AdminAproveTeacher.AdminApprovalActivity" />
-        <activity android:name=".teacherProfileManage.TeacherProfileActivity" />
-        <activity android:name=".teacherProfileManage.ManageInstituteActivity" />
-
+        <activity android:name=".teacher.ManageInstituteActivity" />
     </application>
+
 </manifest>
