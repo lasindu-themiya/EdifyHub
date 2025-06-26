@@ -52,6 +52,8 @@ captures/
 # NDK
 obj/
 
+app/src/main/AndroidManifest.xml
+
 # Crashlytics
 crashlytics-build.properties
 
