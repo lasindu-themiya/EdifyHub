@@ -53,6 +53,8 @@ obj/
 # Crashlytics
 crashlytics-build.properties
 
+app/src/main/AndroidManifest.xml
+
 # Fastlane
 fastlane/report.xml
 fastlane/Preview.html
