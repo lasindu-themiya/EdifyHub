@@ -21,6 +21,8 @@ build/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 
+app/src/main/AndroidManifest.xml
+
 # Local configuration file (sdk path, etc)
 local.properties
 
