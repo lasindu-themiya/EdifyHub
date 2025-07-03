@@ -12,7 +12,7 @@
         android:text="Sign In"
         android:textSize="28dp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="@color/surface"
         android:gravity="center"
         android:layout_marginTop="60dp"
         />
@@ -24,7 +24,7 @@
         android:text="Hi, there! Welcome Back... "
         android:textSize="14dp"
         android:layout_below="@id/signin"
-        android:textColor="@color/white"
+        android:textColor="@color/surface"
         android:gravity="center"
         android:layout_marginTop="20dp"
         />
