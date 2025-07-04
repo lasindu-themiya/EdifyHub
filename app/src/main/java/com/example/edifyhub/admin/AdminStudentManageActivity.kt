@@ -12,16 +12,30 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
 
 class AdminStudentManageActivity : AppCompatActivity() {
     private lateinit var students: MutableList<Student>
     private lateinit var filteredStudents: MutableList<Student>
     private lateinit var adapter: StudentAdapter
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var drawerHandler: DrawerMenuHandler
+    private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_student_manage)
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+
+        drawerHandler = DrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
         students = mutableListOf(
             Student("1", "Alice", 18, "0712345678", "Science", "alice@email.com", R.drawable.ic_profile),

@@ -1,4 +1,4 @@
-package com.example.edifyhub.admin
+package com.example.edifyhub.teacher
 
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,7 @@ import com.example.edifyhub.R
 import com.example.edifyhub.login.LoginActivity
 import com.google.android.material.navigation.NavigationView
 
-class DrawerMenuHandler(
+class TeacherDrawerMenuHandler(
     private val context: Context,
     private val drawerLayout: DrawerLayout,
     private val navigationView: NavigationView,
@@ -35,7 +35,7 @@ class DrawerMenuHandler(
         val toggleView = toolbar.getChildAt(0)
         if (toggleView != null) {
             val scale = context.resources.displayMetrics.density
-            val topMarginInDp = 10  // Adjust this value to perfect alignment
+            val topMarginInDp = 10  // You can tweak this for exact visual alignment
             val topMarginInPx = (topMarginInDp * scale + 0.5f).toInt()
 
             val params = toggleView.layoutParams as Toolbar.LayoutParams
@@ -50,16 +50,17 @@ class DrawerMenuHandler(
         when (item.itemId) {
             R.id.nav_dashboard -> {
                 Toast.makeText(context, "Dashboard clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, AdminDashboardActivity::class.java))
+                context.startActivity(Intent(context, TeacherDashboardActivity::class.java))
                 (context as? AppCompatActivity)?.finish()
             }
-            R.id.nav_managestudent -> {
-                Toast.makeText(context, "Teachers clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, AdminStudentManageActivity::class.java))
-                (context as? AppCompatActivity)?.finish()            }
-            R.id.nav_approve -> {
-                Toast.makeText(context, "Approvals clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, AdminApprovalActivity::class.java))
+            R.id.nav_profile -> {
+                Toast.makeText(context, "Profile clicked", Toast.LENGTH_SHORT).show()
+                context.startActivity(Intent(context, TeacherProfileActivity::class.java))
+                (context as? AppCompatActivity)?.finish()
+            }
+            R.id.nav_create_quiz -> {
+                Toast.makeText(context, "Create Quiz clicked", Toast.LENGTH_SHORT).show()
+                context.startActivity(Intent(context, CreateQuizActivity::class.java))
                 (context as? AppCompatActivity)?.finish()
             }
             R.id.nav_logout -> {
@@ -68,10 +69,10 @@ class DrawerMenuHandler(
                 (context as? AppCompatActivity)?.finish()
             }
         }
+
         drawerLayout.closeDrawers()
         return true
     }
-
 
     fun onBackPressed(): Boolean {
         return if (drawerLayout.isDrawerOpen(navigationView)) {

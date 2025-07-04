@@ -3,21 +3,37 @@ package com.example.edifyhub.teacher
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.google.android.material.navigation.NavigationView
 
 class TeacherDashboardActivity : AppCompatActivity() {
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var drawerHandler: TeacherDrawerMenuHandler
+    private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_dashboard)
 
+        // ✅ Fix toolbar and drawer IDs to match layout
+        toolbar = findViewById(R.id.teacherToolbar)
+        setSupportActionBar(toolbar)
 
-        //sample data
+        drawerLayout = findViewById(R.id.teacherDrawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+
+        // ✅ Assuming TeacherDrawerMenuHandler is implemented properly
+        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
+
+        // Sample data setup
         val quizeCount = 70
         val classesCount = 19
         val monthlyRevenue = 230500
@@ -27,7 +43,6 @@ class TeacherDashboardActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.teacherTotalRevenue).text = "Rs. $monthlyRevenue"
 
         setupLineChart()
-
     }
 
     private fun setupLineChart() {
@@ -46,28 +61,29 @@ class TeacherDashboardActivity : AppCompatActivity() {
             Entry(11f, 65000f),
             Entry(12f, 80000f)
         )
-        val dataSet = LineDataSet(entries, "Revenue (Rs.)")
-        dataSet.color = getColor(R.color.primary)
-        dataSet.valueTextColor = getColor(R.color.text_primary)
-        dataSet.lineWidth = 3f
-        dataSet.circleRadius = 5f
-        dataSet.setCircleColor(getColor(R.color.primary))
-        dataSet.setDrawFilled(true)
-        dataSet.fillColor = getColor(R.color.primary)
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
+        val dataSet = LineDataSet(entries, "Revenue (Rs.)").apply {
+            color = getColor(R.color.primary)
+            valueTextColor = getColor(R.color.text_primary)
+            lineWidth = 3f
+            circleRadius = 5f
+            setCircleColor(getColor(R.color.primary))
+            setDrawFilled(true)
+            fillColor = getColor(R.color.primary)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+        }
 
-        val lineData = LineData(dataSet)
-        lineChart.data = lineData
-
-        val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-        lineChart.xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(months)
-        lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        lineChart.xAxis.granularity = 1f
-        lineChart.axisRight.isEnabled = false
-        lineChart.description.isEnabled = false
-        lineChart.legend.isEnabled = false
-        lineChart.animateY(1000)
-        lineChart.invalidate()
+        lineChart.apply {
+            data = LineData(dataSet)
+            xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(
+                arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+            )
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.granularity = 1f
+            axisRight.isEnabled = false
+            description.isEnabled = false
+            legend.isEnabled = false
+            animateY(1000)
+            invalidate()
+        }
     }
-
 }
