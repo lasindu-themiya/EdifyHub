@@ -1,1 +1,3 @@
 /build
+app/src/main/AndroidManifest.xml
+app/build.gradle.kts
