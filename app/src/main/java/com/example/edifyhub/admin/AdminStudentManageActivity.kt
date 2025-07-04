@@ -60,7 +60,7 @@ class AdminStudentManageActivity : AppCompatActivity() {
             Student("20", "Tina", 17, "0701234560", "Commerce", "tina@email.com", R.drawable.ic_profile)
         )
 
-        filteredStudents = students.toMutableList()
+        filteredStudents = students.toMutableList() //return an arraylist of thr mutableList
 
         val rvStudents = findViewById<RecyclerView>(R.id.rvStudents)
         adapter = StudentAdapter(

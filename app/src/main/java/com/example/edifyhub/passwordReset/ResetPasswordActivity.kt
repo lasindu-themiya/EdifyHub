@@ -28,7 +28,6 @@ class ResetPasswordActivity : AppCompatActivity() {
         setupPasswordToggle(etConfirmPassword, false)
 
         btnSubmitPassword.setOnClickListener {
-            // TODO: Validate passwords and reset
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }

@@ -48,18 +48,18 @@ class TeacherDashboardActivity : AppCompatActivity() {
     private fun setupLineChart() {
         val lineChart = findViewById<LineChart>(R.id.teacherLineChart)
         val entries = listOf(
-            Entry(1f, 20500f),
-            Entry(2f, 30000f),
-            Entry(3f, 25000f),
-            Entry(4f, 40000f),
-            Entry(5f, 35000f),
-            Entry(6f, 50000f),
-            Entry(7f, 45000f),
-            Entry(8f, 60000f),
-            Entry(9f, 55000f),
-            Entry(10f, 70000f),
-            Entry(11f, 65000f),
-            Entry(12f, 80000f)
+            Entry(0f, 20500f),
+            Entry(1f, 30000f),
+            Entry(2f, 25000f),
+            Entry(3f, 40000f),
+            Entry(4f, 35000f),
+            Entry(5f, 50000f),
+            Entry(6f, 45000f),
+            Entry(7f, 60000f),
+            Entry(8f, 55000f),
+            Entry(9f, 70000f),
+            Entry(10f, 65000f),
+            Entry(11f, 80000f)
         )
         val dataSet = LineDataSet(entries, "Revenue (Rs.)").apply {
             color = getColor(R.color.primary)
