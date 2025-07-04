@@ -3,6 +3,8 @@ package com.example.edifyhub.login
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import com.example.edifyhub.R
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
@@ -41,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
                 "student" -> startActivity(Intent(this, StudentDashboardActivity::class.java))
                 "teacher" -> startActivity(Intent(this, TeacherDashboardActivity::class.java))
                 else -> {
-                    // Show error or do nothing
+                    Toast.makeText(this, "Invalid Username", Toast.LENGTH_SHORT).show()
                 }
             }
             finish()

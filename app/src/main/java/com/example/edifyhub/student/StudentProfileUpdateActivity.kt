@@ -1,5 +1,6 @@
 package com.example.edifyhub.student
 
+import StudentDrawerMenuHandler
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
@@ -29,21 +30,6 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
         navigationView = findViewById(R.id.navigationView)
         drawerHandler = StudentDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_student_dashboard -> {
-                    startActivity(Intent(this, StudentDashboardActivity::class.java))
-                    drawerLayout.closeDrawers()
-                    true
-                }
-                R.id.nav_student_profile -> {
-                    drawerLayout.closeDrawers()
-                    // Already here
-                    true
-                }
-                else -> false
-            }
-        }
 
         val imageProfile = findViewById<ImageView>(R.id.imageProfile)
         val btnEditProfilePic = findViewById<ImageView>(R.id.btnEditProfilePic)
