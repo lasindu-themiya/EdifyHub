@@ -12,6 +12,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.example.edifyhub.admin.AdminDashboardActivity
 import com.example.edifyhub.student.StudentDashboardActivity
 import com.example.edifyhub.teacher.TeacherDashboardActivity
+import com.example.edifyhub.passwordReset.EnterEmailActivity
 
 class LoginActivity : AppCompatActivity() {
 
@@ -22,6 +23,13 @@ class LoginActivity : AppCompatActivity() {
         val signupButtonTeacher = findViewById<MaterialButton>(R.id.teacherSignUp)
         signupButtonTeacher.setOnClickListener {
             val intent = Intent(this, TeacherSignupActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        val passworReset = findViewById<TextView>(R.id.forgetUserPassword)
+        passworReset.setOnClickListener {
+            val intent = Intent(this, EnterEmailActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -44,6 +52,8 @@ class LoginActivity : AppCompatActivity() {
                 "teacher" -> startActivity(Intent(this, TeacherDashboardActivity::class.java))
                 else -> {
                     Toast.makeText(this, "Invalid Username", Toast.LENGTH_SHORT).show()
+                    val intent= Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
                 }
             }
             finish()

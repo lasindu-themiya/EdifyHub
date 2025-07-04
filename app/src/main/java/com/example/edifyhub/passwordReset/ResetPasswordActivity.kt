@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.edifyhub.R
+import com.example.edifyhub.login.LoginActivity
 
 class ResetPasswordActivity : AppCompatActivity() {
     private var isPasswordVisible = false
@@ -28,7 +29,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         btnSubmitPassword.setOnClickListener {
             // TODO: Validate passwords and reset
-            startActivity(Intent(this, com.example.edifyhub.MainActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }
