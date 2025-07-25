@@ -10,53 +10,124 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.example.edifyhub.admin.AdminDashboardActivity
+import com.example.edifyhub.databinding.ActivityLoginBinding
 import com.example.edifyhub.student.StudentDashboardActivity
 import com.example.edifyhub.teacher.TeacherDashboardActivity
 import com.example.edifyhub.passwordReset.EnterEmailActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var db:FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val signupButtonTeacher = findViewById<MaterialButton>(R.id.teacherSignUp)
-        signupButtonTeacher.setOnClickListener {
-            val intent = Intent(this, TeacherSignupActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
 
-        val passworReset = findViewById<TextView>(R.id.forgetUserPassword)
-        passworReset.setOnClickListener {
+        firebaseAuth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
+
+        //forget password page
+        binding.forgetUserPassword.setOnClickListener{
             val intent = Intent(this, EnterEmailActivity::class.java)
             startActivity(intent)
-            finish()
         }
 
-        val signupButtonStudent = findViewById<MaterialButton>(R.id.studentSignUp)
-        signupButtonStudent.setOnClickListener {
+
+        //teacher signup page
+        binding.teacherSignUp.setOnClickListener {
+            val intent = Intent(this, TeacherSignupActivity::class.java)
+            startActivity(intent)
+        }
+
+        //student signup page
+        binding.studentSignUp.setOnClickListener{
             val intent = Intent(this, StudentSignupActivity::class.java)
             startActivity(intent)
         }
 
-        // Assume you have a login button and a username input field
-        val loginButton = findViewById<MaterialButton>(R.id.signinbtn)
-        val usernameInput = findViewById<EditText>(R.id.loginusername)
 
-        loginButton.setOnClickListener {
-            val username = usernameInput.text?.toString()?.trim()?.lowercase()
-            when (username) {
-                "admin" -> startActivity(Intent(this, AdminDashboardActivity::class.java))
-                "student" -> startActivity(Intent(this, StudentDashboardActivity::class.java))
-                "teacher" -> startActivity(Intent(this, TeacherDashboardActivity::class.java))
-                else -> {
-                    Toast.makeText(this, "Invalid Username", Toast.LENGTH_SHORT).show()
-                    val intent= Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
+        binding.signinbtn.setOnClickListener {
+            val email = binding.loginusername.text.toString()
+            val password = binding.loginpassword.text.toString()
+
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+
+                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+
+                    if (it.isSuccessful) {
+
+                        val userId = firebaseAuth.currentUser?.uid
+
+                        if (userId != null) {
+                            db.collection("users").document(userId).get()
+                                .addOnSuccessListener { document ->
+
+                                    if (document != null && document.exists()) {
+                                        val role = document.getString("userRole")
+                                        when (role) {
+                                            "admin" -> {
+                                                val intent =
+                                                    Intent(this, AdminDashboardActivity::class.java)
+                                                startActivity(intent)
+                                                finish()
+                                            }
+
+                                            "teacher" -> {
+                                                val intent = Intent(
+                                                    this,
+                                                    TeacherDashboardActivity::class.java
+                                                )
+                                                startActivity(intent)
+                                                finish()
+                                            }
+
+                                            "student" -> {
+                                                val intent = Intent(
+                                                    this,
+                                                    StudentDashboardActivity::class.java
+                                                )
+                                                startActivity(intent)
+                                                finish()
+                                            }
+
+                                            else -> {
+                                                Toast.makeText(
+                                                    this,
+                                                    "Unknown user role",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    } else {
+                                        Toast.makeText(
+                                            this,
+                                            "User not exists! please Sign Up.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }.addOnFailureListener { e ->
+                                Toast.makeText(
+                                    this,
+                                    "Error fetching user role: ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                            }
+
+                        } else {
+                            Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
-            finish()
+
         }
     }
 }
