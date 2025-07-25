@@ -71,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
 
                                     if (document != null && document.exists()) {
                                         val role = document.getString("userRole")
+                                        val status = document.getString("status")
                                         when (role) {
                                             "admin" -> {
                                                 val intent =
@@ -80,12 +81,16 @@ class LoginActivity : AppCompatActivity() {
                                             }
 
                                             "teacher" -> {
-                                                val intent = Intent(
-                                                    this,
-                                                    TeacherDashboardActivity::class.java
-                                                )
-                                                startActivity(intent)
-                                                finish()
+                                                if(status == "pending"){
+                                                    Toast.makeText(this, "Wait for approval", Toast.LENGTH_SHORT).show()
+                                                }else{
+                                                    val intent = Intent(
+                                                        this,
+                                                        TeacherDashboardActivity::class.java
+                                                    )
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
                                             }
 
                                             "student" -> {

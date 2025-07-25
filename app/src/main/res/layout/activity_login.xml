@@ -127,8 +127,8 @@
             android:layout_below="@id/createAccount"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text=" Sign Up as"
-            android:textColor="@color/surface"
+            android:text=" Signup as"
+            android:textColor="@color/text_primary"
             />
 
 

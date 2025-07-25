@@ -136,10 +136,21 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/signInWith"
+            android:id="@+id/or"
             android:layout_below="@+id/signupbtn"
+            android:text="OR"
+            android:gravity="center"
             android:layout_marginTop="10dp"
-            android:text="Or Sign Up With"
+            android:textColor="@color/cardview_dark_background"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/signInWith"
+            android:layout_below="@+id/or"
+            android:layout_marginTop="10dp"
+            android:text="Sign Up With"
             android:gravity="center"
             android:textColor="@color/cardview_dark_background"
             android:textStyle="italic"
