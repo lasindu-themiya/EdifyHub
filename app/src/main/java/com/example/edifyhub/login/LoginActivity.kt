@@ -82,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
 
                                             "teacher" -> {
                                                 if(status == "pending"){
-                                                    Toast.makeText(this, "Wait for approval", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(this, "Sent for approval", Toast.LENGTH_SHORT).show()
                                                 }else{
                                                     val intent = Intent(
                                                         this,
@@ -129,6 +129,8 @@ class LoginActivity : AppCompatActivity() {
                         } else {
                             Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
                         }
+                    }else{
+                        Toast.makeText(this, "Please Signup first!", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

@@ -56,5 +56,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation(libs.mpandroidchart)
     implementation ("com.google.firebase:firebase-firestore:26.0.0")
+    implementation ("com.google.android.gms:play-services-auth:21.0.0")
+
 
 }
