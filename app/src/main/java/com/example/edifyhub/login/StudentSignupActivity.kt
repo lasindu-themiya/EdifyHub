@@ -102,58 +102,10 @@ class StudentSignupActivity : AppCompatActivity(){
             startActivity(intent)
         }
 
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
         binding.googleLogin.setOnClickListener{
-            signInGoogle()
+            val intent = Intent(this, GoogleAuthActivity::class.java)
+            startActivity(intent)
         }
 
     }
-
-    private fun signInGoogle(){
-        val signInIntent = googleSignInClient.signInIntent
-        launcher.launch(signInIntent)
-    }
-
-    private  val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        result ->
-        if(result.resultCode == Activity.RESULT_OK){
-
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            handleResults(task)
-        }
-    }
-
-    private fun handleResults(task: Task<GoogleSignInAccount>) {
-        if(task.isSuccessful){
-
-            val account : GoogleSignInAccount? = task.result
-            if(account != null){
-                updateUI(account)
-            }
-        }else{
-            Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateUI(account: GoogleSignInAccount) {
-        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        firebaseAuth.signInWithCredential(credential).addOnCompleteListener{
-            if(it.isSuccessful){
-                Toast.makeText(this, "SignUp SuccessFully!", Toast.LENGTH_SHORT).show()
-                val intent : Intent = Intent(this, StudentProfileUpdateActivity::class.java)
-                startActivity(intent)
-            }else{
-                Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
 }
