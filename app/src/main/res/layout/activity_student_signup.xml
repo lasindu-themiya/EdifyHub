@@ -133,65 +133,14 @@
             android:backgroundTint="@color/primary"
             android:layout_margin="20dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/or"
-            android:layout_below="@+id/signupbtn"
-            android:text="OR"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/cardview_dark_background"
-            />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/signInWith"
-            android:layout_below="@+id/or"
-            android:layout_marginTop="10dp"
-            android:text="Sign Up With"
-            android:gravity="center"
-            android:textColor="@color/cardview_dark_background"
-            android:textStyle="italic"
-            />
-
-        <!-- Google and GitHub login icons -->
-        <LinearLayout
-            android:id="@+id/socialLoginContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/signInWith"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:layout_marginTop="15dp">
-
-            <ImageView
-                android:id="@+id/googleLogin"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/google_logo"
-                android:layout_marginEnd="20dp"
-                android:focusable="true"
-                android:clickable="true"
-                android:contentDescription="Sign in with Google"/>
-
-            <ImageView
-                android:id="@+id/githubLogin"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/github_logo"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="Sign in with GitHub"/>
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/signInPromptContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_below="@id/socialLoginContainer"
+            android:layout_below="@id/signupbtn"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:gravity="center_vertical">

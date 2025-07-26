@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
     android:fitsSystemWindows="true"
     >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="100dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -101,12 +106,66 @@
         android:layout_height="wrap_content"
         android:id="@+id/signinbtn"
         android:text="Sign In"
-        android:layout_below="@+id/loginpassword"
+        android:layout_below="@+id/passwordForgetContainer"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/primary"
         android:layout_margin="40dp"
         android:layout_marginBottom="20dp"
         />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/or"
+            android:layout_below="@+id/signinbtn"
+            android:text="OR"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/cardview_dark_background"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/signInWith"
+            android:layout_below="@+id/or"
+            android:layout_marginTop="10dp"
+            android:text="Continue with"
+            android:gravity="center"
+            android:textColor="@color/cardview_dark_background"
+            android:textStyle="italic"
+            />
+
+        <!-- Google and GitHub login icons -->
+        <LinearLayout
+            android:id="@+id/socialLoginContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signInWith"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
+
+            <ImageView
+                android:id="@+id/googleLogin"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/google_logo"
+                android:layout_marginEnd="20dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:contentDescription="Sign in with Google"/>
+
+            <ImageView
+                android:id="@+id/githubLogin"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/github_logo"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Sign in with GitHub"/>
+        </LinearLayout>
 
 
 
@@ -115,10 +174,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/createAccount"
             android:text="Don't you have an account?"
-            android:layout_marginTop="10dp"
-            android:layout_below="@id/signinbtn"
+            android:layout_marginTop="30dp"
+            android:layout_below="@id/socialLoginContainer"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/surface"/>
+            android:textColor="@color/cardview_dark_background"/>
 
         <TextView
             android:id="@+id/signUpLink"
@@ -169,6 +228,8 @@
 
 
     </LinearLayout>
+    </RelativeLayout>
 
 
-</RelativeLayout>
+</ScrollView>
+
