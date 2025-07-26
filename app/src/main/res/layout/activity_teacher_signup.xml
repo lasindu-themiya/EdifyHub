@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/teachersignuptitle"
+            android:text="Teacher Sign Up"
+            android:textSize="28dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_margin="20dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/teacherusername"
+            android:layout_below="@+id/teachersignuptitle"
+            android:background="#30ffffff"
+            android:hint="Username"
+            android:textColorHint="@color/cardview_dark_background"
+            android:textColor="@color/surface"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:drawableLeft="@drawable/person"
+            android:drawablePadding="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/teacherabout"
+            android:layout_below="@+id/teacherusername"
+            android:background="#30ffffff"
+            android:hint="About(Qualifications)"
+            android:textColorHint="@color/cardview_dark_background"
+            android:textColor="@color/surface"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:drawableLeft="@drawable/info"
+            android:drawablePadding="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/institute"
+            android:layout_below="@+id/teacherabout"
+            android:background="#30ffffff"
+            android:hint="Institute"
+            android:textColorHint="@color/cardview_dark_background"
+            android:textColor="@color/surface"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:drawableLeft="@drawable/institute"
+            android:drawablePadding="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/subject"
+            android:layout_below="@+id/institute"
+            android:background="#30ffffff"
+            android:hint="Subject"
+            android:textColorHint="@color/cardview_dark_background"
+            android:textColor="@color/surface"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:drawableLeft="@drawable/learn"
+            android:drawablePadding="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/teacheremail"
+            android:layout_below="@+id/subject"
+            android:background="#30ffffff"
+            android:hint="Email"
+            android:textColorHint="@color/cardview_dark_background"
+            android:textColor="@color/surface"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:drawableLeft="@drawable/mail"
+            android:drawablePadding="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/teacherpassword"
+            android:layout_below="@+id/teacheremail"
+            android:background="#30ffffff"
+            android:hint="Password"
+            android:textColorHint="@color/cardview_dark_background"
+            android:textColor="@color/surface"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:drawableLeft="@drawable/lock"
+            android:drawablePadding="15dp"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/teacherrepassword"
+            android:layout_below="@+id/teacherpassword"
+            android:background="#30ffffff"
+            android:hint="Re-Type Password"
+            android:textColorHint="@color/cardview_dark_background"
+            android:textColor="@color/surface"
+            android:layout_margin="10dp"
+            android:inputType="textPassword"
+            android:padding="15dp"
+            android:drawableLeft="@drawable/lock"
+            android:drawablePadding="15dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/teachersignupbtn"
+            android:text="Sign Up"
+            android:layout_below="@+id/teacherrepassword"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/primary"
+            android:layout_margin="20dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/signInPromptContainer"
+            android:orientation="horizontal"
+            android:layout_below="@+id/teachersignupbtn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/alreadyhave"
+                android:text="Do you already have an account?"
+                android:textColor="@color/cardview_dark_background" />
+
+            <TextView
+                android:id="@+id/signInLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign In"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>
