@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.text.get
 
 class LoginActivity : AppCompatActivity() {
 
@@ -198,13 +199,33 @@ class LoginActivity : AppCompatActivity() {
 
     private fun updateUI(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        firebaseAuth.signInWithCredential(credential).addOnCompleteListener{
-            if(it.isSuccessful){
-                Toast.makeText(this, "SignUp SuccessFully!", Toast.LENGTH_SHORT).show()
-                val intent : Intent = Intent(this, StudentProfileUpdateActivity::class.java)
-                startActivity(intent)
-            }else{
-                Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener { authResult ->
+            if (authResult.isSuccessful) {
+                val userId = firebaseAuth.currentUser?.uid
+                if (userId != null) {
+                    db.collection("users").document(userId).get()
+                        .addOnSuccessListener { document ->
+                            if (document != null && document.exists()) {
+                                // Existing user, go to dashboard
+                                val intent = Intent(this, StudentDashboardActivity::class.java)
+                                intent.putExtra("USER_ID", userId)
+                                startActivity(intent)
+                            } else {
+                                // New user, go to profile update
+                                val intent = Intent(this, StudentProfileUpdateActivity::class.java)
+                                intent.putExtra("USER_ID", userId)
+                                startActivity(intent)
+                            }
+                            finish()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, authResult.exception.toString(), Toast.LENGTH_SHORT).show()
             }
         }
     }
