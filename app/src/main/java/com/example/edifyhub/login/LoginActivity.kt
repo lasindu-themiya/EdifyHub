@@ -92,17 +92,17 @@ class LoginActivity : AppCompatActivity() {
                                             }
 
                                             "teacher" -> {
-                                                if(status == "pending"){
-                                                    Toast.makeText(this, "Sent for approval", Toast.LENGTH_SHORT).show()
-                                                }else{
-                                                    val intent = Intent(
-                                                        this,
-                                                        TeacherDashboardActivity::class.java
-                                                    )
-                                                    startActivity(intent)
-                                                    finish()
-                                                }
+                                            if(status == "pending"){
+                                                Toast.makeText(this, "Sent for approval", Toast.LENGTH_SHORT).show()
+                                            }else{
+                                                val intent = Intent(
+                                                    this,
+                                                    TeacherDashboardActivity::class.java
+                                                )
+                                                startActivity(intent)
+                                                finish()
                                             }
+                                        }
 
                                             "student" -> {
                                                 val intent = Intent(
@@ -129,13 +129,13 @@ class LoginActivity : AppCompatActivity() {
                                         ).show()
                                     }
                                 }.addOnFailureListener { e ->
-                                Toast.makeText(
-                                    this,
-                                    "Error fetching user role: ${e.message}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                    Toast.makeText(
+                                        this,
+                                        "Error fetching user role: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                            }
+                                }
 
                         } else {
                             Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
