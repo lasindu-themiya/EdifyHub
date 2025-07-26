@@ -36,17 +36,24 @@ class StudentDrawerMenuHandler(
     }
 
     private fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Retrieve userId from the current activity's intent
+        val userId = (context as? AppCompatActivity)?.intent?.getStringExtra("USER_ID")
+
         when (item.itemId) {
             R.id.nav_student_dashboard -> {
                 Toast.makeText(context, "Dashboard clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, StudentDashboardActivity::class.java))
+                val intent = Intent(context, StudentDashboardActivity::class.java)
+                intent.putExtra("USER_ID", userId)
+                context.startActivity(intent)
                 (context as? AppCompatActivity)?.finish()
                 drawerLayout.closeDrawers()
                 return true
             }
             R.id.nav_student_profile -> {
                 Toast.makeText(context, "Profile clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, StudentProfileUpdateActivity::class.java))
+                val intent = Intent(context, StudentProfileUpdateActivity::class.java)
+                intent.putExtra("USER_ID", userId)
+                context.startActivity(intent)
                 (context as? AppCompatActivity)?.finish()
                 drawerLayout.closeDrawers()
                 return true

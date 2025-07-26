@@ -18,10 +18,14 @@ class StudentDashboardActivity : AppCompatActivity() {
     private lateinit var toolbar: Toolbar
     private lateinit var drawerHandler: StudentDrawerMenuHandler
 
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student_dashboard)
+
+        // Retrieve user ID from intent
+        userId = intent.getStringExtra("USER_ID")
 
         toolbar = findViewById(R.id.studentToolbar)
         setSupportActionBar(toolbar)
@@ -29,7 +33,6 @@ class StudentDashboardActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.studentDrawerLayout)
         navigationView = findViewById(R.id.navigationView)
         drawerHandler = StudentDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
-
 
         val userName = "Saman Kumara"
         val completedQuizzes = 64
@@ -44,6 +47,8 @@ class StudentDashboardActivity : AppCompatActivity() {
         val searchQuizzes = findViewById<ImageButton>(R.id.searchQuizzes)
         searchQuizzes.setOnClickListener {
             val intent = Intent(this, StudentSignupActivity::class.java)
+            // Pass userId to next activity if needed
+            intent.putExtra("USER_ID", userId)
             startActivity(intent)
         }
     }

@@ -66,7 +66,7 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
                         .addOnSuccessListener {
                             Toast.makeText(this, "Profile updated!", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this, StudentDashboardActivity::class.java)
-                            intent.putExtra("USER_ID", userId)
+                            intent.putExtra("USER_ID", userId) // Pass user ID to dashboard
                             startActivity(intent)
                             finish()
                         }
@@ -84,4 +84,3 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
         // TODO: Add logic for editing profile picture if needed
     }
 }
-
