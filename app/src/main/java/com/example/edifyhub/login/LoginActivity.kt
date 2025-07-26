@@ -24,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
@@ -164,6 +165,13 @@ class LoginActivity : AppCompatActivity() {
             signInGoogle()
         }
 
+
+        //GitHub sign in section
+        binding.githubLogin.setOnClickListener {
+            signInWithGitHub()
+        }
+
+
     }
 
     private fun signInGoogle(){
@@ -208,4 +216,47 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+
+    private fun signInWithGitHub() {
+        val provider = OAuthProvider.newBuilder("github.com")
+        val pendingResultTask = firebaseAuth.pendingAuthResult
+
+        if (pendingResultTask != null) {
+            // If there's a pending result, use it.
+            pendingResultTask
+                .addOnSuccessListener { authResult ->
+                    handleGitHubSignIn(authResult.user?.uid)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "GitHub sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            firebaseAuth
+                .startActivityForSignInWithProvider(this, provider.build())
+                .addOnSuccessListener { authResult ->
+                    handleGitHubSignIn(authResult.user?.uid)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "GitHub sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+
+    private fun handleGitHubSignIn(userId: String?) {
+        if (userId != null) {
+            Toast.makeText(this, "GitHub Sign-In successful!", Toast.LENGTH_SHORT).show()
+            // TODO: Save GitHub user info to Firestore if needed
+            // Here you can navigate them to your app's dashboard or profile setup:
+            val intent = Intent(this, StudentProfileUpdateActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            Toast.makeText(this, "GitHub User ID is null", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
 }
