@@ -92,17 +92,17 @@ class LoginActivity : AppCompatActivity() {
                                             }
 
                                             "teacher" -> {
-                                            if(status == "pending"){
-                                                Toast.makeText(this, "Sent for approval", Toast.LENGTH_SHORT).show()
-                                            }else{
-                                                val intent = Intent(
-                                                    this,
-                                                    TeacherDashboardActivity::class.java
-                                                )
-                                                startActivity(intent)
-                                                finish()
+                                                if(status == "pending"){
+                                                    Toast.makeText(this, "Sent for approval", Toast.LENGTH_SHORT).show()
+                                                }else{
+                                                    val intent = Intent(
+                                                        this,
+                                                        TeacherDashboardActivity::class.java
+                                                    )
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
                                             }
-                                        }
 
                                             "student" -> {
                                                 val intent = Intent(
@@ -167,8 +167,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInGoogle(){
-        val signInIntent = googleSignInClient.signInIntent
-        launcher.launch(signInIntent)
+        // By signing out, you ensure that the user is always prompted to select a Google account,
+        // which is the behavior you're looking for.
+        googleSignInClient.signOut().addOnCompleteListener(this) {
+            val signInIntent = googleSignInClient.signInIntent
+            launcher.launch(signInIntent)
+        }
     }
 
     private  val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
