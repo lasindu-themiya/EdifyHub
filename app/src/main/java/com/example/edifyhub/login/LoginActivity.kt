@@ -20,6 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
@@ -126,6 +127,33 @@ class LoginActivity : AppCompatActivity() {
         binding.googleLogin.setOnClickListener {
             signInGoogle()
         }
+
+
+        //GitHub sign in section
+        binding.githubLogin.setOnClickListener {
+            val provider = OAuthProvider.newBuilder("github.com")
+            val pendingResultTask = firebaseAuth.pendingAuthResult
+            if (pendingResultTask != null) {
+                pendingResultTask
+                    .addOnSuccessListener { authResult ->
+                        handleGitHubResult()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "GitHub Sign In Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                firebaseAuth
+                    .startActivityForSignInWithProvider(this, provider.build())
+                    .addOnSuccessListener {
+                        handleGitHubResult()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "GitHub Sign In Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
+
+
     }
 
     private fun signInGoogle() {
@@ -185,4 +213,33 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+
+    //GitHub section
+    private fun handleGitHubResult() {
+        val userId = firebaseAuth.currentUser?.uid
+        if (userId != null) {
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val intent = Intent(this, StudentDashboardActivity::class.java)
+                        intent.putExtra("USER_ID", userId)
+                        startActivity(intent)
+                    } else {
+                        val intent = Intent(this, StudentProfileUpdateActivity::class.java)
+                        intent.putExtra("USER_ID", userId)
+                        startActivity(intent)
+                    }
+                    finish()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
 }
