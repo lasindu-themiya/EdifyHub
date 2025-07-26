@@ -5,5 +5,5 @@ data class TeacherSignupRequestModel(
     val name: String,
     val email: String,
     val subject: String,
-    val instituteName: String
+    val institute: String
 )

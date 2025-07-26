@@ -1,6 +1,7 @@
 package com.example.edifyhub.admin
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AdminApprovalActivity : AppCompatActivity() {
 
@@ -17,6 +19,8 @@ class AdminApprovalActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
     private lateinit var toolbar: Toolbar
     private lateinit var drawerHandler: DrawerMenuHandler
+    private val db = FirebaseFirestore.getInstance()
+    private val teacherList = mutableListOf<TeacherSignupRequestModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,44 +31,67 @@ class AdminApprovalActivity : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
-
-        // Setup navigation drawer toggle and listener
         drawerHandler = DrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
         recyclerView = findViewById(R.id.teacherRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val sampleRequests = mutableListOf(
-            TeacherSignupRequestModel(
-                "1",
-                "John Doe",
-                "john@example.com",
-                "Physics",
-                "ABC Institute"
-            ),
-            TeacherSignupRequestModel(
-                "2",
-                "Jane Smith",
-                "jane@example.com",
-                "Mathematics",
-                "XYZ Academy"
-            ),
-            TeacherSignupRequestModel(
-                "3",
-                "Ayesha Khan",
-                "ayesha@example.com",
-                "Biology",
-                "Brilliant College"
-            )
-        )
-
         adapter = TeacherAdapter(
-            sampleRequests,
-            onApprove = { teacher -> println("✅ Approved: ${teacher.name}") },
-            onReject = { teacher -> println("❌ Rejected: ${teacher.name}") }
+            teacherList,
+            onApprove = { teacher -> approveTeacher(teacher) },
+            onReject = { teacher -> rejectTeacher(teacher) }
         )
-
         recyclerView.adapter = adapter
+
+        fetchPendingTeachers()
+    }
+
+    private fun fetchPendingTeachers() {
+        db.collection("users")
+            .whereEqualTo("userRole", "teacher")
+            .whereEqualTo("status", "pending")
+            .get()
+            .addOnSuccessListener { result ->
+                teacherList.clear()
+                for (doc in result) {
+                    val teacher = TeacherSignupRequestModel(
+                        id = doc.id,
+                        name = doc.getString("username") ?: "",
+                        email = doc.getString("email") ?: "",
+                        subject = doc.getString("subject") ?: "",
+                        institute = doc.getString("institute") ?: ""
+                    )
+                    teacherList.add(teacher)
+                }
+                adapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun approveTeacher(teacher: TeacherSignupRequestModel) {
+        db.collection("users").document(teacher.id)
+            .update("status", "approved")
+            .addOnSuccessListener {
+                Toast.makeText(this, "Approved: ${teacher.name}", Toast.LENGTH_SHORT).show()
+                fetchPendingTeachers()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun rejectTeacher(teacher: TeacherSignupRequestModel) {
+        db.collection("users").document(teacher.id)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Rejected: ${teacher.name}", Toast.LENGTH_SHORT).show()
+                fetchPendingTeachers()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     override fun onBackPressed() {

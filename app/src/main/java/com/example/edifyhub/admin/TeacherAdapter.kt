@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.edifyhub.admin.TeacherSignupRequestModel
 import com.example.edifyhub.R
 
 class TeacherAdapter(
@@ -36,7 +35,7 @@ class TeacherAdapter(
         holder.name.text = teacher.name
         holder.email.text = "Email: ${teacher.email}"
         holder.subject.text = "Subject: ${teacher.subject}"
-        holder.institute.text = "Institute: ${teacher.instituteName}"
+        holder.institute.text = "Institute: ${teacher.institute}"
 
         holder.approveIcon.setOnClickListener {
             AlertDialog.Builder(holder.itemView.context)
