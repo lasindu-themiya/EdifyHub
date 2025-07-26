@@ -11,8 +11,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.example.edifyhub.login.StudentSignupActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class StudentDashboardActivity : AppCompatActivity() {
+
+    private lateinit var db: FirebaseFirestore
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var toolbar: Toolbar
@@ -24,6 +27,8 @@ class StudentDashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student_dashboard)
 
+        db = FirebaseFirestore.getInstance()
+
         // Retrieve user ID from intent
         userId = intent.getStringExtra("USER_ID")
 
@@ -34,15 +39,31 @@ class StudentDashboardActivity : AppCompatActivity() {
         navigationView = findViewById(R.id.navigationView)
         drawerHandler = StudentDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
-        val userName = "Saman Kumara"
+
         val completedQuizzes = 64
         val upComingQuizzes = 27
         val postedDiscussions = 30
 
-        findViewById<TextView>(R.id.username).text = "Hello, $userName"
         findViewById<TextView>(R.id.completedQuizzes).text = completedQuizzes.toString()
         findViewById<TextView>(R.id.upComingQuizzes).text = upComingQuizzes.toString()
         findViewById<TextView>(R.id.postedDiscussions).text = postedDiscussions.toString()
+
+
+        if(userId != null){
+            db.collection("users").document(userId!!).get()
+                .addOnSuccessListener { document ->
+                    if(document != null && document.exists()){
+                        val username = document.getString("username") ?: "student"
+                        findViewById<TextView>(R.id.username).text = "Hello, $username"
+                    }else{
+                        findViewById<TextView>(R.id.username).text = "Hello, Student"
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    findViewById<TextView>(R.id.username).text = "Hello, Student"
+                }
+        }
+
 
         val searchQuizzes = findViewById<ImageButton>(R.id.searchQuizzes)
         searchQuizzes.setOnClickListener {
