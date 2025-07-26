@@ -84,7 +84,7 @@ class AdminApprovalActivity : AppCompatActivity() {
 
     private fun rejectTeacher(teacher: TeacherSignupRequestModel) {
         db.collection("users").document(teacher.id)
-            .delete()
+            .update("status", "rejected")
             .addOnSuccessListener {
                 Toast.makeText(this, "Rejected: ${teacher.name}", Toast.LENGTH_SHORT).show()
                 fetchPendingTeachers()
