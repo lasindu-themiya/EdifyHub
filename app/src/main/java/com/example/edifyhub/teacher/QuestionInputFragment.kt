@@ -278,6 +278,7 @@ class QuestionInputFragment : Fragment() {
                 }
                 Toast.makeText(requireContext(), "Quiz created successfully!", Toast.LENGTH_SHORT).show()
                 val intent = Intent(requireContext(), TeacherDashboardActivity::class.java)
+                intent.putExtra("USER_ID", userId) // Pass userId to dashboard
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 requireActivity().finish()

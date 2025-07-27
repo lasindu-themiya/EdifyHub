@@ -51,6 +51,7 @@ class TeacherDrawerMenuHandler(
             R.id.nav_dashboard -> Intent(context, TeacherDashboardActivity::class.java)
             R.id.nav_profile -> Intent(context, TeacherProfileActivity::class.java)
             R.id.nav_create_quiz -> Intent(context, CreateQuizActivity::class.java)
+            R.id.nav_schedule -> Intent(context, TeacherQuizScheduleActivity::class.java) // Add this line
             R.id.nav_logout -> Intent(context, LoginActivity::class.java)
             else -> null
         }
