@@ -41,7 +41,6 @@ class ViewQuizFragment : Fragment() {
 
                 info.text = "Student: $studentUsername\nTeacher: $teacherName\nScore: $score/$total"
 
-                // Fetch questions to show text and correct answer
                 db.collection("users").document(quizItem.teacherId)
                     .collection("quizzes").document(quizItem.id)
                     .collection("questions")
