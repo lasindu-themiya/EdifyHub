@@ -1,6 +1,5 @@
 package com.example.edifyhub.student
 
-import QuizAdapter
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -10,13 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import java.util.*
 
 class StudentQuizListFragment : Fragment() {
     private lateinit var quizAdapter: QuizAdapter
     private val allQuizzes = mutableListOf<QuizItem>()
     private var userId: String? = null
+    private val attemptedQuizIds = mutableSetOf<String>()
+    private val paidQuizIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,16 +30,30 @@ class StudentQuizListFragment : Fragment() {
         val subjectSearch = root.findViewById<EditText>(R.id.subjectSearch)
         val teacherSearch = root.findViewById<EditText>(R.id.teacherSearch)
 
-        quizAdapter = QuizAdapter()
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = quizAdapter
-
         progressBar.visibility = View.VISIBLE
-        fetchQuizzes { quizzes ->
-            allQuizzes.clear()
-            allQuizzes.addAll(quizzes)
-            quizAdapter.submitList(quizzes)
-            progressBar.visibility = View.GONE
+        fetchAttemptedQuizIds { ids ->
+            attemptedQuizIds.clear()
+            attemptedQuizIds.addAll(ids)
+            fetchPaidQuizIds { paidIds ->
+                paidQuizIds.clear()
+                paidQuizIds.addAll(paidIds)
+                quizAdapter = QuizAdapter(
+                    onAttendClick = { quizItem -> showAttendQuizFragment(quizItem) },
+                    onViewQuizClick = { quizItem -> showViewQuizFragment(quizItem) },
+                    onPayClick = { quizItem -> handlePayQuiz(quizItem) },
+                    attemptedQuizIds = attemptedQuizIds,
+                    paidQuizIds = paidQuizIds
+                )
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                recyclerView.adapter = quizAdapter
+
+                fetchQuizzes { quizzes ->
+                    allQuizzes.clear()
+                    allQuizzes.addAll(quizzes)
+                    quizAdapter.submitList(quizzes)
+                    progressBar.visibility = View.GONE
+                }
+            }
         }
 
         subjectSearch.addTextChangedListener { filterQuizzes(subjectSearch.text.toString(), teacherSearch.text.toString()) }
@@ -54,6 +68,38 @@ class StudentQuizListFragment : Fragment() {
                     (teacher.isBlank() || it.teacherName.contains(teacher, ignoreCase = true))
         }
         quizAdapter.submitList(filtered)
+    }
+
+    private fun fetchAttemptedQuizIds(onResult: (Set<String>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        if (userId == null) {
+            onResult(emptySet())
+            return
+        }
+        db.collection("users").document(userId!!)
+            .collection("attemptedQuizzes")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val ids = snapshot.map { it.id }.toSet()
+                onResult(ids)
+            }
+            .addOnFailureListener { onResult(emptySet()) }
+    }
+
+    private fun fetchPaidQuizIds(onResult: (Set<String>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        if (userId == null) {
+            onResult(emptySet())
+            return
+        }
+        db.collection("users").document(userId!!)
+            .collection("paidQuizzes")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val ids = snapshot.map { it.id }.toSet()
+                onResult(ids)
+            }
+            .addOnFailureListener { onResult(emptySet()) }
     }
 
     private fun fetchQuizzes(onResult: (List<QuizItem>) -> Unit) {
@@ -81,6 +127,7 @@ class StudentQuizListFragment : Fragment() {
                                 val scheduledAt = quizDoc.getDate("scheduledAt")
                                 val meetingAt = quizDoc.getDate("meetingAt")
                                 val amount = quizDoc.getDouble("amount") ?: 0.0
+                                val isPaid = quizDoc.getBoolean("paid") ?: false
                                 if (scheduledAt != null && meetingAt != null &&
                                     now.after(scheduledAt) && now.before(meetingAt)) {
                                     quizzes.add(
@@ -88,10 +135,12 @@ class StudentQuizListFragment : Fragment() {
                                             id = quizDoc.id,
                                             name = quizDoc.getString("name") ?: "",
                                             subject = quizDoc.getString("subject") ?: "",
+                                            teacherId = teacherId,
                                             teacherName = teacherName,
                                             scheduledAt = scheduledAt,
                                             meetingAt = meetingAt,
-                                            amount = amount
+                                            amount = amount,
+                                            isPaid = isPaid
                                         )
                                     )
                                 }
@@ -110,5 +159,26 @@ class StudentQuizListFragment : Fragment() {
                 }
             }
             .addOnFailureListener { onResult(emptyList()) }
+    }
+
+    private fun showAttendQuizFragment(quizItem: QuizItem) {
+        val fragment = AttendQuizFragment.newInstance(quizItem)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun showViewQuizFragment(quizItem: QuizItem) {
+        val fragment = ViewQuizFragment.newInstance(quizItem)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun handlePayQuiz(quizItem: QuizItem) {
+        // Redirect to student dashboard
+        parentFragmentManager.popBackStack(null, 0)
     }
 }

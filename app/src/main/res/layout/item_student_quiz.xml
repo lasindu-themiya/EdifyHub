@@ -68,6 +68,13 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp"
             android:layout_marginBottom="2dp"/>
+        <Button
+            android:id="@+id/btnAttend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attend"
+            android:layout_gravity="end"
+            android:enabled="false"/>
 
         <TextView
             android:id="@+id/quizMeeting"
