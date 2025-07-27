@@ -43,6 +43,7 @@ class AttendQuizFragment : Fragment() {
                     val rb = RadioButton(requireContext())
                     rb.text = answer
                     rb.id = i
+                    rb.setTextColor(resources.getColor(R.color.text_primary, null))
                     radioGroup.addView(rb)
                 }
                 radioGroup.setOnCheckedChangeListener { _, checkedId ->
