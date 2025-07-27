@@ -7,6 +7,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
 import androidx.fragment.app.commit
+import java.util.Date
 
 class CreateQuizActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -39,10 +40,11 @@ class CreateQuizActivity : AppCompatActivity() {
         numQuestions: Int,
         numAnswers: Int,
         paid: Boolean,
-        amount: Double?
+        amount: Double?,
+        scheduledDate: Date?
     ) {
         val fragment = QuestionInputFragment.newInstance(
-            name, subject, numQuestions, numAnswers, paid, amount, userId
+            name, subject, numQuestions, numAnswers, paid, amount, userId, scheduledDate
         )
         supportFragmentManager.commit {
             replace(R.id.fragment_container, fragment)

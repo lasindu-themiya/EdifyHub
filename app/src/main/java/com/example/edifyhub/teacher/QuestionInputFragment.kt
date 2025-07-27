@@ -15,6 +15,8 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
+import kotlin.or
+import kotlin.toString
 
 class QuestionInputFragment : Fragment() {
     private var quizName = ""
@@ -24,6 +26,7 @@ class QuestionInputFragment : Fragment() {
     private var paid = false
     private var amount: Double? = null
     private var userId: String? = null
+    private var scheduledDate: Date? = null
 
     companion object {
         fun newInstance(
@@ -33,19 +36,20 @@ class QuestionInputFragment : Fragment() {
             numAnswers: Int,
             paid: Boolean,
             amount: Double?,
-            userId: String?
-        ) =
-            QuestionInputFragment().apply {
-                arguments = Bundle().apply {
-                    putString("name", name)
-                    putString("subject", subject)
-                    putInt("questions", numQuestions)
-                    putInt("answers", numAnswers)
-                    putBoolean("paid", paid)
-                    putDouble("amount", amount ?: 0.0)
-                    putString("userId", userId)
-                }
+            userId: String?,
+            scheduledDate: Date?
+        ) = QuestionInputFragment().apply {
+            arguments = Bundle().apply {
+                putString("name", name)
+                putString("subject", subject)
+                putInt("questions", numQuestions)
+                putInt("answers", numAnswers)
+                putBoolean("paid", paid)
+                putDouble("amount", amount ?: 0.0)
+                putString("userId", userId)
+                putLong("scheduledDate", scheduledDate?.time ?: 0L)
             }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +62,8 @@ class QuestionInputFragment : Fragment() {
             paid = it.getBoolean("paid")
             amount = it.getDouble("amount", 0.0)
             userId = it.getString("userId")
+            val schedMillis = it.getLong("scheduledDate", 0L)
+            scheduledDate = if (schedMillis > 0) Date(schedMillis) else null
         }
     }
 
@@ -234,13 +240,15 @@ class QuestionInputFragment : Fragment() {
             Toast.makeText(requireContext(), "User ID not found", Toast.LENGTH_SHORT).show()
             return
         }
-        // Validate correct answer selection
-        for (i in 0 until numQuestions) {
-            if (correctAnswerSpinners[i].selectedItemPosition == AdapterView.INVALID_POSITION) {
-                Toast.makeText(requireContext(), "Select the correct answer for question ${i + 1}", Toast.LENGTH_SHORT).show()
-                return
-            }
+        if (scheduledDate == null) {
+            Toast.makeText(requireContext(), "Scheduled date missing", Toast.LENGTH_SHORT).show()
+            return
         }
+        val meetingDate = Calendar.getInstance().apply {
+            time = scheduledDate!!
+            add(Calendar.DAY_OF_YEAR, 7)
+        }.time
+
         val db = FirebaseFirestore.getInstance()
         val quizData = hashMapOf(
             "name" to quizName,
@@ -249,7 +257,9 @@ class QuestionInputFragment : Fragment() {
             "numAnswers" to numAnswers,
             "paid" to paid,
             "amount" to (amount ?: 0.0),
-            "createdAt" to Date()
+            "createdAt" to Date(),
+            "scheduledAt" to scheduledDate,
+            "meetingAt" to meetingDate
         )
         db.collection("users").document(userId!!)
             .collection("quizzes")
