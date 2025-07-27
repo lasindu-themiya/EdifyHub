@@ -16,7 +16,8 @@ class TeacherDrawerMenuHandler(
     private val context: Context,
     private val drawerLayout: DrawerLayout,
     private val navigationView: NavigationView,
-    private val toolbar: Toolbar
+    private val toolbar: Toolbar,
+    private val userId: String? // Add userId here
 ) : NavigationView.OnNavigationItemSelectedListener {
 
     private val toggle: ActionBarDrawerToggle = ActionBarDrawerToggle(
@@ -31,11 +32,10 @@ class TeacherDrawerMenuHandler(
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Adjust toggle vertical margin for perfect alignment with title
         val toggleView = toolbar.getChildAt(0)
         if (toggleView != null) {
             val scale = context.resources.displayMetrics.density
-            val topMarginInDp = 10  // You can tweak this for exact visual alignment
+            val topMarginInDp = 10
             val topMarginInPx = (topMarginInDp * scale + 0.5f).toInt()
 
             val params = toggleView.layoutParams as Toolbar.LayoutParams
@@ -47,27 +47,20 @@ class TeacherDrawerMenuHandler(
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_dashboard -> {
-                Toast.makeText(context, "Dashboard clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, TeacherDashboardActivity::class.java))
-                (context as? AppCompatActivity)?.finish()
+        val intent = when (item.itemId) {
+            R.id.nav_dashboard -> Intent(context, TeacherDashboardActivity::class.java)
+            R.id.nav_profile -> Intent(context, TeacherProfileActivity::class.java)
+            R.id.nav_create_quiz -> Intent(context, CreateQuizActivity::class.java)
+            R.id.nav_logout -> Intent(context, LoginActivity::class.java)
+            else -> null
+        }
+
+        if (intent != null) {
+            if (item.itemId != R.id.nav_logout && userId != null) {
+                intent.putExtra("USER_ID", userId)
             }
-            R.id.nav_profile -> {
-                Toast.makeText(context, "Profile clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, TeacherProfileActivity::class.java))
-                (context as? AppCompatActivity)?.finish()
-            }
-            R.id.nav_create_quiz -> {
-                Toast.makeText(context, "Create Quiz clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, CreateQuizActivity::class.java))
-                (context as? AppCompatActivity)?.finish()
-            }
-            R.id.nav_logout -> {
-                Toast.makeText(context, "Logout clicked", Toast.LENGTH_SHORT).show()
-                context.startActivity(Intent(context, LoginActivity::class.java))
-                (context as? AppCompatActivity)?.finish()
-            }
+            context.startActivity(intent)
+            (context as? AppCompatActivity)?.finish()
         }
 
         drawerLayout.closeDrawers()

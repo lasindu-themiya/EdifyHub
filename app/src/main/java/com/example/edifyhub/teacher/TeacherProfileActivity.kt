@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class TeacherProfileActivity : AppCompatActivity() {
 
@@ -33,6 +34,9 @@ class TeacherProfileActivity : AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 1
     private var selectedImageUri: Uri? = null
 
+    private lateinit var db: FirebaseFirestore
+    private var userId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_profile)
@@ -43,8 +47,8 @@ class TeacherProfileActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.teacherDrawerLayout)
         navigationView = findViewById(R.id.navigationView)
 
-        // ✅ Assuming TeacherDrawerMenuHandler is implemented properly
-        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
+        userId = intent.getStringExtra("USER_ID")
+        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar, userId)
 
         imageProfile = findViewById(R.id.imageProfile)
         btnEditProfilePic = findViewById(R.id.btnEditProfilePic)
@@ -55,14 +59,13 @@ class TeacherProfileActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSave)
         btnManageInstitute = findViewById(R.id.btnManageInstitute)
 
-        // Load dummy data (replace with real data in your app)
-        etName.setText("John Doe")
-        etAbout.setText("Experienced physics teacher with 10 years of experience.")
-        etInstitute.setText("ABC Institute")
-        etSubject.setText("Physics")
+        db = FirebaseFirestore.getInstance()
+
+        loadProfile()
 
         btnManageInstitute.setOnClickListener {
             val intent = Intent(this, ManageInstituteActivity::class.java)
+            intent.putExtra("USER_ID", userId)
             startActivity(intent)
         }
 
@@ -75,6 +78,24 @@ class TeacherProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadProfile() {
+        if (userId == null) return
+        db.collection("users").document(userId!!)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    etName.setText(doc.getString("username") ?: "")
+                    etAbout.setText(doc.getString("about Qualifications") ?: "")
+                    etInstitute.setText(doc.getString("institute") ?: "")
+                    etSubject.setText(doc.getString("subject") ?: "")
+                    // Optionally load profile image if you store it
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to load profile: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun openImageChooser() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
@@ -83,15 +104,13 @@ class TeacherProfileActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.data
-
-            // Load image with Glide and apply circle crop
             Glide.with(this)
                 .load(selectedImageUri)
                 .apply(RequestOptions.circleCropTransform())
                 .into(imageProfile)
+            // You can upload the image to Firebase Storage and save the URL in Firestore if needed
         }
     }
 
@@ -106,7 +125,25 @@ class TeacherProfileActivity : AppCompatActivity() {
             return
         }
 
-        // TODO: Save profile data to your backend or local DB here
-        Toast.makeText(this, "Profile saved successfully!", Toast.LENGTH_SHORT).show()
+        if (userId == null) {
+            Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val updates = mapOf(
+            "username" to name,
+            "about Qualifications" to about,
+            "institute" to institute,
+            "subject" to subject
+        )
+
+        db.collection("users").document(userId!!)
+            .update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

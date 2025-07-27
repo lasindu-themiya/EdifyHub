@@ -13,19 +13,19 @@ class CreateQuizActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
     private lateinit var drawerHandler: TeacherDrawerMenuHandler
     private lateinit var toolbar: Toolbar
-
+    private var userId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_quiz)
 
         toolbar = findViewById(R.id.teacherToolbar)
         setSupportActionBar(toolbar)
-
+        userId = intent.getStringExtra("USER_ID")
         drawerLayout = findViewById(R.id.teacherDrawerLayout)
         navigationView = findViewById(R.id.navigationView)
 
         // Assumes TeacherDrawerMenuHandler is implemented as in dashboard/profile
-        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
+        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar,userId)
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
