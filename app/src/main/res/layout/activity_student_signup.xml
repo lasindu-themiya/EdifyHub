@@ -65,25 +65,60 @@
             android:drawablePadding="15dp"
             android:inputType="phone"/>
 
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/stream"
+            android:id="@+id/icon"
             android:layout_below="@id/mobile"
-            android:background="#30ffffff"
-            android:hint="A/L Stream"
-            android:textColorHint="@color/cardview_dark_background"
-            android:textColor="@color/surface"
             android:layout_margin="10dp"
-            android:padding="15dp"
-            android:drawableLeft="@drawable/learn"
-            android:drawablePadding="15dp"/>
+            android:orientation="horizontal"
+            android:background="#30ffffff"
+            android:padding="15dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/learn"
+                android:layout_marginEnd="10dp"/>
+
+            <Spinner
+                android:id="@+id/stream"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+
+
+        <!--        <Spinner-->
+<!--            android:id="@+id/stream"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/mobile"-->
+<!--            android:background="#30ffffff"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:padding="15dp"/>-->
+
+
+        <!--        <EditText-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/stream"-->
+<!--            android:layout_below="@id/mobile"-->
+<!--            android:background="#30ffffff"-->
+<!--            android:hint="A/L Stream"-->
+<!--            android:textColorHint="@color/cardview_dark_background"-->
+<!--            android:textColor="@color/surface"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:padding="15dp"-->
+<!--            android:drawableLeft="@drawable/learn"-->
+<!--            android:drawablePadding="15dp"/>-->
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/email"
-            android:layout_below="@id/stream"
+            android:layout_below="@id/icon"
             android:background="#30ffffff"
             android:hint="Email"
             android:textColorHint="@color/cardview_dark_background"
