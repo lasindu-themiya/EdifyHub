@@ -1,5 +1,6 @@
 package com.example.edifyhub.admin
 
+import com.example.edifyhub.R
 import java.io.Serializable
 
 data class Student(
@@ -9,5 +10,5 @@ data class Student(
     var mobile: String,
     var stream: String,
     var email: String,
-    var profilePicRes: Int // drawable resource id
+    var profilePicRes: Int = R.drawable.ic_profile
 ): Serializable
