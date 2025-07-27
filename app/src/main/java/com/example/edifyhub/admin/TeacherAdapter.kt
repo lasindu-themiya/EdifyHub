@@ -1,4 +1,4 @@
-package com.example.edifyhub.AdminAproveTeacher
+package com.example.edifyhub.admin
 
 import android.app.AlertDialog
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
-import com.example.edifyhub.AdminAproveTeacher.TeacherSignupRequestModel
 
 class TeacherAdapter(
     private val teacherList: MutableList<TeacherSignupRequestModel>,
@@ -36,7 +35,7 @@ class TeacherAdapter(
         holder.name.text = teacher.name
         holder.email.text = "Email: ${teacher.email}"
         holder.subject.text = "Subject: ${teacher.subject}"
-        holder.institute.text = "Institute: ${teacher.instituteName}"
+        holder.institute.text = "Institute: ${teacher.institute}"
 
         holder.approveIcon.setOnClickListener {
             AlertDialog.Builder(holder.itemView.context)

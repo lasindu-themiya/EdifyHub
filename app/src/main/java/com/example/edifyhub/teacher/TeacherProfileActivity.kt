@@ -1,4 +1,4 @@
-package com.example.edifyhub.teacherProfileManage
+package com.example.edifyhub.teacher
 
 import android.content.Intent
 import android.net.Uri
@@ -8,9 +8,12 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.edifyhub.R
+import com.google.android.material.navigation.NavigationView
 
 class TeacherProfileActivity : AppCompatActivity() {
 
@@ -22,6 +25,10 @@ class TeacherProfileActivity : AppCompatActivity() {
     private lateinit var etSubject: EditText
     private lateinit var btnManageInstitute: Button
     private lateinit var btnSave: Button
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var drawerHandler: TeacherDrawerMenuHandler
+    private lateinit var toolbar: Toolbar
 
     private val PICK_IMAGE_REQUEST = 1
     private var selectedImageUri: Uri? = null
@@ -29,6 +36,15 @@ class TeacherProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_profile)
+
+        toolbar = findViewById(R.id.teacherToolbar)
+        setSupportActionBar(toolbar)
+
+        drawerLayout = findViewById(R.id.teacherDrawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+
+        // ✅ Assuming TeacherDrawerMenuHandler is implemented properly
+        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
         imageProfile = findViewById(R.id.imageProfile)
         btnEditProfilePic = findViewById(R.id.btnEditProfilePic)

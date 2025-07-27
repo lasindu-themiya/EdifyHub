@@ -1,11 +1,14 @@
-package com.example.edifyhub.teacherProfileManage
+package com.example.edifyhub.teacher
 
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.navigation.NavigationView
 
 class ManageInstituteActivity : AppCompatActivity() {
 
@@ -16,9 +19,21 @@ class ManageInstituteActivity : AppCompatActivity() {
     private lateinit var etContact: EditText
     private lateinit var btnSave: MaterialButton
 
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var drawerHandler: TeacherDrawerMenuHandler
+    private lateinit var toolbar: Toolbar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_institute)
+
+        toolbar = findViewById(R.id.teacherToolbar)
+        setSupportActionBar(toolbar)
+
+        drawerLayout = findViewById(R.id.teacherDrawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
         etName = findViewById(R.id.etInstituteName)
         etAddress = findViewById(R.id.etInstituteAddress)
