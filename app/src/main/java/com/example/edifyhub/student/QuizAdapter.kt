@@ -1,17 +1,14 @@
-package com.example.edifyhub.student
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
+import com.example.edifyhub.student.QuizItem
 import java.text.SimpleDateFormat
 import java.util.*
 
-// app/src/main/java/com/example/edifyhub/student/QuizAdapter.kt
 class QuizAdapter : ListAdapter<QuizItem, QuizAdapter.QuizViewHolder>(QuizDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuizViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_student_quiz, parent, false)
@@ -40,8 +37,4 @@ class QuizAdapter : ListAdapter<QuizItem, QuizAdapter.QuizViewHolder>(QuizDiffCa
             amount.text = if (item.amount == 0.0) "Free" else "Rs. ${item.amount}"
         }
     }
-}
-class QuizDiffCallback : DiffUtil.ItemCallback<QuizItem>() {
-    override fun areItemsTheSame(oldItem: QuizItem, newItem: QuizItem) = oldItem.id == newItem.id
-    override fun areContentsTheSame(oldItem: QuizItem, newItem: QuizItem) = oldItem == newItem
 }

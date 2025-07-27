@@ -1,5 +1,6 @@
 package com.example.edifyhub.student
 
+import QuizAdapter
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -11,16 +12,6 @@ import com.example.edifyhub.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import java.util.*
-
-data class QuizItem(
-    val id: String,
-    val name: String,
-    val subject: String,
-    val teacherName: String,
-    val scheduledAt: Date,
-    val meetingAt: Date,
-    val amount: Double
-)
 
 class StudentQuizListFragment : Fragment() {
     private lateinit var quizAdapter: QuizAdapter
