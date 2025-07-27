@@ -90,30 +90,6 @@
         </LinearLayout>
 
 
-        <!--        <Spinner-->
-<!--            android:id="@+id/stream"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_below="@id/mobile"-->
-<!--            android:background="#30ffffff"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:padding="15dp"/>-->
-
-
-        <!--        <EditText-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:id="@+id/stream"-->
-<!--            android:layout_below="@id/mobile"-->
-<!--            android:background="#30ffffff"-->
-<!--            android:hint="A/L Stream"-->
-<!--            android:textColorHint="@color/cardview_dark_background"-->
-<!--            android:textColor="@color/surface"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:padding="15dp"-->
-<!--            android:drawableLeft="@drawable/learn"-->
-<!--            android:drawablePadding="15dp"/>-->
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
