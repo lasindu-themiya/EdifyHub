@@ -43,7 +43,6 @@ class AdminDashboardActivity : AppCompatActivity() {
         val tvStudentCount = findViewById<TextView>(R.id.tvStudentCount)
         val tvTeacherCount = findViewById<TextView>(R.id.tvTeacherCount)
 
-        // Fetch student count
         db.collection("users")
             .whereEqualTo("userRole", "student")
             .get()
@@ -51,7 +50,6 @@ class AdminDashboardActivity : AppCompatActivity() {
                 tvStudentCount.text = result.size().toString()
             }
 
-        // Fetch teacher count
         db.collection("users")
             .whereEqualTo("userRole", "teacher")
             .get()

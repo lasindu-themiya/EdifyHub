@@ -1,5 +1,6 @@
 package com.example.edifyhub.admin
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class AdminApprovalActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: TeacherAdapter
+    private lateinit var adapter: TeacherApprovalAdapter
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var toolbar: Toolbar
@@ -37,7 +38,7 @@ class AdminApprovalActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.teacherRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = TeacherAdapter(
+        adapter = TeacherApprovalAdapter(
             teacherList,
             onApprove = { teacher -> approveTeacher(teacher) },
             onReject = { teacher -> rejectTeacher(teacher) }
@@ -104,6 +105,29 @@ class AdminApprovalActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+    companion object {
+        fun rejectTeacherAdminManage(
+            context: Context,
+            teacherId: String,
+            teacherEmail: String,
+            teacherName: String,
+            onSuccess: () -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(teacherId)
+                .update("status", "rejected")
+                .addOnSuccessListener {
+                    // Send email
+                    val subject = "Your EdifyHub Teacher Account Has Been Rejected"
+                    val body = "Dear $teacherName,\n\nYour teacher account has been rejected by the administrator.\n\nRegards,\nEdifyHub Team"
+                    EmailSender.sendEmail(teacherEmail, subject, body)
+                    onSuccess()
+                }
+                .addOnFailureListener { e -> onFailure(e) }
+        }
+    }
+
 
     override fun onBackPressed() {
         if (!drawerHandler.onBackPressed()) {
