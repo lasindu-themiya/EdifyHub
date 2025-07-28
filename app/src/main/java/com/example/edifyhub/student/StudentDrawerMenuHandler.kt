@@ -10,6 +10,7 @@ import com.example.edifyhub.login.LoginActivity
 import com.example.edifyhub.student.StudentDashboardActivity
 import com.example.edifyhub.student.StudentProfileUpdateActivity
 import com.example.edifyhub.student.StudentQuizListActivity
+import com.example.edifyhub.student.StudentViewAttendedQuizActivity
 import com.google.android.material.navigation.NavigationView
 
 class StudentDrawerMenuHandler(
@@ -62,6 +63,16 @@ class StudentDrawerMenuHandler(
             R.id.nav_student_quizzes -> {
                 Toast.makeText(context, "Quizzes clicked", Toast.LENGTH_SHORT).show()
                 val intent = Intent(context, StudentQuizListActivity::class.java)
+                intent.putExtra("USER_ID", userId)
+                context.startActivity(intent)
+                (context as? AppCompatActivity)?.finish()
+                drawerLayout.closeDrawers()
+                return true
+            }
+            // Inside onNavigationItemSelected:
+            R.id.nav_student_attempted_quizzes -> {
+                Toast.makeText(context, "Attempted Quizzes clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, StudentViewAttendedQuizActivity::class.java)
                 intent.putExtra("USER_ID", userId)
                 context.startActivity(intent)
                 (context as? AppCompatActivity)?.finish()

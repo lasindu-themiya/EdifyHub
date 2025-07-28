@@ -12,6 +12,11 @@
         android:id="@+id/nav_student_quizzes"
         android:title="Quizzes"
         android:icon="@drawable/ic_quiz" />
+
+    <item
+        android:id="@+id/nav_student_attempted_quizzes"
+        android:title="Attempted Quizzes"
+        android:icon="@drawable/ic_history" />
     <item
         android:id="@+id/nav_logout"
         android:title="Logout"
