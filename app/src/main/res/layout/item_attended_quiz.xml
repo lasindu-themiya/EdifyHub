@@ -59,5 +59,15 @@
             android:text="Date"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"/>
+
+        <Button
+            android:id="@+id/btnViewInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Info"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/primary"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 </LinearLayout>

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Date
 
 data class AttendedQuiz(
     val quizId: String = "",
@@ -24,7 +25,11 @@ class StudentViewAttendedQuizFragment : Fragment() {
     private var userId: String? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private val adapter = AttendedQuizAdapter()
+    private val adapter by lazy {
+        AttendedQuizAdapter { attendedQuiz ->
+            navigateToViewQuiz(attendedQuiz)
+        }
+    }
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +49,25 @@ class StudentViewAttendedQuizFragment : Fragment() {
         progressBar.visibility = View.VISIBLE
         fetchAttendedQuizzes()
         return root
+    }
+
+    private fun navigateToViewQuiz(attendedQuiz: AttendedQuiz) {
+        val quizItem = QuizItem(
+            id = attendedQuiz.quizId,
+            name = attendedQuiz.quizName,
+            subject = attendedQuiz.subject,
+            teacherId = attendedQuiz.teacherId,
+            teacherName = attendedQuiz.teacherName,
+            scheduledAt = attendedQuiz.timestamp?.toDate() ?: Date(0),
+            meetingAt = attendedQuiz.timestamp?.toDate() ?: Date(0),
+            amount = 0.0,
+            isPaid = false
+        )
+        val fragment = ViewQuizFragment.newInstance(quizItem)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun fetchAttendedQuizzes() {
