@@ -3,10 +3,8 @@ package com.example.edifyhub.teacher
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,13 +21,19 @@ class TeacherProfileActivity : AppCompatActivity() {
     private lateinit var etName: EditText
     private lateinit var etAbout: EditText
     private lateinit var etInstitute: EditText
-    private lateinit var etSubject: EditText
     private lateinit var btnManageInstitute: Button
     private lateinit var btnSave: Button
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var drawerHandler: TeacherDrawerMenuHandler
     private lateinit var toolbar: Toolbar
+
+    private lateinit var spinnerStream: Spinner
+    private lateinit var spinnerSubject: Spinner
+    private lateinit var streamAdapter: ArrayAdapter<String>
+    private lateinit var subjectAdapter: ArrayAdapter<String>
+    private var currentStream: String? = null
+    private var currentSubject: String? = null
 
     private val PICK_IMAGE_REQUEST = 1
     private var selectedImageUri: Uri? = null
@@ -55,11 +59,36 @@ class TeacherProfileActivity : AppCompatActivity() {
         etName = findViewById(R.id.etName)
         etAbout = findViewById(R.id.etAbout)
         etInstitute = findViewById(R.id.etInstitute)
-        etSubject = findViewById(R.id.etSubject)
         btnSave = findViewById(R.id.btnSave)
         btnManageInstitute = findViewById(R.id.btnManageInstitute)
 
+        spinnerStream = findViewById(R.id.spinnerStream)
+        spinnerSubject = findViewById(R.id.spinnerSubject)
+
         db = FirebaseFirestore.getInstance()
+        streamAdapter = ArrayAdapter(this, R.layout.spinner_item, mutableListOf("Select Stream"))
+        streamAdapter.setDropDownViewResource(R.layout.spinner_item)
+        spinnerStream.adapter = streamAdapter
+
+        subjectAdapter = ArrayAdapter(this, R.layout.spinner_item, mutableListOf("Select Subject"))
+        subjectAdapter.setDropDownViewResource(R.layout.spinner_item)
+        spinnerSubject.adapter = subjectAdapter
+
+        fetchStreams()
+
+        spinnerStream.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedStream = parent.getItemAtPosition(position).toString()
+                if (selectedStream != "Select Stream") {
+                    fetchSubjects(selectedStream)
+                } else {
+                    subjectAdapter.clear()
+                    subjectAdapter.add("Select Subject")
+                    subjectAdapter.notifyDataSetChanged()
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
 
         loadProfile()
 
@@ -78,6 +107,51 @@ class TeacherProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun fetchStreams() {
+        db.collection("streams").get()
+            .addOnSuccessListener { result ->
+                val streams = mutableListOf("Select Stream")
+                for (doc in result) {
+                    streams.add(doc.id)
+                }
+                streamAdapter.clear()
+                streamAdapter.addAll(streams)
+                streamAdapter.notifyDataSetChanged()
+                // Set current stream if available
+                currentStream?.let {
+                    val pos = streams.indexOf(it)
+                    if (pos >= 0) spinnerStream.setSelection(pos)
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to fetch streams!", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun fetchSubjects(stream: String) {
+        db.collection("streams").document(stream).get()
+            .addOnSuccessListener { doc ->
+                val subjects = mutableListOf("Select Subject")
+                if (doc != null && doc.exists()) {
+                    val array = doc.get("subjects") as? List<*>
+                    array?.forEach {
+                        subjects.add(it.toString())
+                    }
+                }
+                subjectAdapter.clear()
+                subjectAdapter.addAll(subjects)
+                subjectAdapter.notifyDataSetChanged()
+                // Set current subject if available
+                currentSubject?.let {
+                    val pos = subjects.indexOf(it)
+                    if (pos >= 0) spinnerSubject.setSelection(pos)
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to fetch subjects!", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun loadProfile() {
         if (userId == null) return
         db.collection("users").document(userId!!)
@@ -87,8 +161,9 @@ class TeacherProfileActivity : AppCompatActivity() {
                     etName.setText(doc.getString("username") ?: "")
                     etAbout.setText(doc.getString("about Qualifications") ?: "")
                     etInstitute.setText(doc.getString("institute") ?: "")
-                    etSubject.setText(doc.getString("subject") ?: "")
-                    // Optionally load profile image if you store it
+                    currentStream = doc.getString("stream")
+                    currentSubject = doc.getString("subject")
+                    fetchStreams()
                 }
             }
             .addOnFailureListener { e ->
@@ -118,9 +193,10 @@ class TeacherProfileActivity : AppCompatActivity() {
         val name = etName.text.toString().trim()
         val about = etAbout.text.toString().trim()
         val institute = etInstitute.text.toString().trim()
-        val subject = etSubject.text.toString().trim()
+        val stream = spinnerStream.selectedItem.toString()
+        val subject = spinnerSubject.selectedItem.toString()
 
-        if (name.isEmpty() || institute.isEmpty() || subject.isEmpty()) {
+        if (name.isEmpty() || institute.isEmpty() || stream == "Select Stream" || subject == "Select Subject") {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
             return
         }
@@ -134,6 +210,7 @@ class TeacherProfileActivity : AppCompatActivity() {
             "username" to name,
             "about Qualifications" to about,
             "institute" to institute,
+            "stream" to stream,
             "subject" to subject
         )
 

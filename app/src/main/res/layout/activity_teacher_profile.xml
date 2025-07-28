@@ -149,7 +149,22 @@
                     android:padding="12dp"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Subject -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Stream"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="sans-serif-medium" />
+                <Spinner
+                    android:id="@+id/spinnerStream"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/spinner_background" />
+
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -158,17 +173,13 @@
                     android:textSize="16sp"
                     android:layout_marginBottom="4dp"
                     android:fontFamily="sans-serif-medium" />
-                <EditText
-                    android:id="@+id/etSubject"
+                <Spinner
+                    android:id="@+id/spinnerSubject"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter your subject"
-                    android:minHeight="48dp"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:background="@drawable/edittext_background"
-                    android:padding="12dp"
-                    android:layout_marginBottom="24dp" />
+                    android:layout_marginBottom="24dp"
+                    android:background="@drawable/spinner_background" />
+
 
                 <!-- Save Button -->
                 <com.google.android.material.button.MaterialButton
