@@ -8,14 +8,12 @@
     android:background="@color/background"
     android:fitsSystemWindows="true">
 
-    <!-- Main content with toolbar and your original layout -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/teacherToolbar"
             android:layout_width="match_parent"
@@ -27,7 +25,6 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <!-- Your original content starts here -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,6 +35,34 @@
             android:gravity="center"
             android:paddingBottom="16dp"
             android:fontFamily="sans-serif-medium" />
+
+        <!-- Profile Image with Edit Icon, right after the label -->
+        <FrameLayout
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:id="@+id/imageProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/circle_background"
+                android:contentDescription="Profile Picture"
+                android:scaleType="centerCrop"
+                android:src="@drawable/baseline_person_24" />
+
+            <ImageView
+                android:id="@+id/btnEditProfilePic"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="4dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_edit"
+                android:background="@drawable/edit_icon_bg"
+                android:contentDescription="Edit Profile Picture" />
+        </FrameLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -52,37 +77,10 @@
                 android:gravity="center_horizontal"
                 android:background="@color/surface"
                 android:elevation="4dp"
-                android:layout_marginTop="120dp"
+                android:layout_marginTop="0dp"
                 android:clipToPadding="false"
                 android:clipChildren="false"
                 android:layout_gravity="center">
-
-                <!-- Profile Image with Edit Icon -->
-                <FrameLayout
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_marginBottom="24dp">
-
-                    <ImageView
-                        android:id="@+id/imageProfile"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/circle_background"
-                        android:contentDescription="Profile Picture"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/baseline_person_24" />
-
-                    <ImageView
-                        android:id="@+id/btnEditProfilePic"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_gravity="bottom|end"
-                        android:layout_margin="4dp"
-                        android:padding="6dp"
-                        android:src="@drawable/ic_edit"
-                        android:background="@drawable/edit_icon_bg"
-                        android:contentDescription="Edit Profile Picture" />
-                </FrameLayout>
 
                 <!-- Name -->
                 <TextView
@@ -213,7 +211,6 @@
         </ScrollView>
     </LinearLayout>
 
-    <!-- Navigation Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="300dp"
