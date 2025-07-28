@@ -10,6 +10,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -117,7 +120,6 @@ class TeacherProfileActivity : AppCompatActivity() {
                 streamAdapter.clear()
                 streamAdapter.addAll(streams)
                 streamAdapter.notifyDataSetChanged()
-                // Set current stream if available
                 currentStream?.let {
                     val pos = streams.indexOf(it)
                     if (pos >= 0) spinnerStream.setSelection(pos)
@@ -141,7 +143,6 @@ class TeacherProfileActivity : AppCompatActivity() {
                 subjectAdapter.clear()
                 subjectAdapter.addAll(subjects)
                 subjectAdapter.notifyDataSetChanged()
-                // Set current subject if available
                 currentSubject?.let {
                     val pos = subjects.indexOf(it)
                     if (pos >= 0) spinnerSubject.setSelection(pos)
@@ -163,6 +164,17 @@ class TeacherProfileActivity : AppCompatActivity() {
                     etInstitute.setText(doc.getString("institute") ?: "")
                     currentStream = doc.getString("stream")
                     currentSubject = doc.getString("subject")
+                    val imageUrl = doc.getString("profileImageUrl")
+                    if (!imageUrl.isNullOrEmpty()) {
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .apply(RequestOptions.circleCropTransform())
+                            .placeholder(R.drawable.baseline_person_24)
+                            .error(R.drawable.baseline_person_24)
+                            .into(imageProfile)
+                    } else {
+                        imageProfile.setImageResource(R.drawable.baseline_person_24)
+                    }
                     fetchStreams()
                 }
             }
@@ -181,11 +193,35 @@ class TeacherProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.data
-            Glide.with(this)
-                .load(selectedImageUri)
-                .apply(RequestOptions.circleCropTransform())
-                .into(imageProfile)
-            // You can upload the image to Firebase Storage and save the URL in Firestore if needed
+            selectedImageUri?.let { uri ->
+                MediaManager.get().upload(uri)
+                    .callback(object : UploadCallback {
+                        override fun onStart(requestId: String?) {}
+                        override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
+                        override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
+                            val url = resultData["secure_url"] as? String
+                            url?.let {
+                                userId?.let { uid ->
+                                    db.collection("users").document(uid)
+                                        .update("profileImageUrl", it)
+                                        .addOnSuccessListener {
+                                            Glide.with(this@TeacherProfileActivity)
+                                                .load(url)
+                                                .apply(RequestOptions.circleCropTransform())
+                                                .placeholder(R.drawable.baseline_person_24)
+                                                .error(R.drawable.baseline_person_24)
+                                                .into(imageProfile)
+                                            Toast.makeText(this@TeacherProfileActivity, "Profile picture updated!", Toast.LENGTH_SHORT).show()
+                                        }
+                                }
+                            }
+                        }
+                        override fun onError(requestId: String?, error: ErrorInfo?) {
+                            Toast.makeText(this@TeacherProfileActivity, "Upload failed: ${error?.description}", Toast.LENGTH_SHORT).show()
+                        }
+                        override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+                    }).dispatch()
+            }
         }
     }
 
