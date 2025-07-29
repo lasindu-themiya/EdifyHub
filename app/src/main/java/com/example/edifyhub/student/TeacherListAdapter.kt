@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.edifyhub.R
-import kotlin.collections.get
 
 data class TeacherItem(
     val id: String,
@@ -19,8 +19,10 @@ data class TeacherItem(
     val subject: String
 )
 
-class TeacherListAdapter(private var teachers: List<TeacherItem>) :
-    RecyclerView.Adapter<TeacherListAdapter.TeacherViewHolder>() {
+class TeacherListAdapter(
+    private var teachers: List<TeacherItem>,
+    private val onViewInstitute: (teacherId: String) -> Unit
+) : RecyclerView.Adapter<TeacherListAdapter.TeacherViewHolder>() {
 
     class TeacherViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val profileImage: ImageView = view.findViewById(R.id.teacherProfileImage)
@@ -28,6 +30,7 @@ class TeacherListAdapter(private var teachers: List<TeacherItem>) :
         val institute: TextView = view.findViewById(R.id.teacherInstitute)
         val subject: TextView = view.findViewById(R.id.teacherSubject)
         val about: TextView = view.findViewById(R.id.teacherAbout)
+        val btnViewInstitute: Button = view.findViewById(R.id.btnViewInstitute)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeacherViewHolder {
@@ -35,7 +38,6 @@ class TeacherListAdapter(private var teachers: List<TeacherItem>) :
             .inflate(R.layout.item_studentviewteacher, parent, false)
         return TeacherViewHolder(view)
     }
-
 
     override fun onBindViewHolder(holder: TeacherViewHolder, position: Int) {
         val teacher = teachers[position]
@@ -49,6 +51,10 @@ class TeacherListAdapter(private var teachers: List<TeacherItem>) :
             .error(R.drawable.baseline_person_24)
             .circleCrop()
             .into(holder.profileImage)
+
+        holder.btnViewInstitute.setOnClickListener {
+            onViewInstitute(teacher.id)
+        }
     }
 
     override fun getItemCount() = teachers.size
