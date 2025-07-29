@@ -1,5 +1,6 @@
 package com.example.edifyhub.admin
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -8,13 +9,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
+import com.example.edifyhub.email.EmailSender
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AdminApprovalActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: TeacherAdapter
+    private lateinit var adapter: TeacherApprovalAdapter
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var toolbar: Toolbar
@@ -36,7 +38,7 @@ class AdminApprovalActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.teacherRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = TeacherAdapter(
+        adapter = TeacherApprovalAdapter(
             teacherList,
             onApprove = { teacher -> approveTeacher(teacher) },
             onReject = { teacher -> rejectTeacher(teacher) }
@@ -75,6 +77,11 @@ class AdminApprovalActivity : AppCompatActivity() {
             .update("status", "approved")
             .addOnSuccessListener {
                 Toast.makeText(this, "Approved: ${teacher.name}", Toast.LENGTH_SHORT).show()
+
+                val subject = "Your EdifyHub Application is Approved"
+                val body = "Dear ${teacher.name},\n\nCongratulations! Your application to become a teacher on EdifyHub Education Platform has been Successfully approved. You can now log in and start using the platform.\n\nBest regards,\nThe EdifyHub Team"
+                EmailSender.sendEmail(teacher.email, subject, body)
+
                 fetchPendingTeachers()
             }
             .addOnFailureListener { e ->
@@ -87,12 +94,40 @@ class AdminApprovalActivity : AppCompatActivity() {
             .update("status", "rejected")
             .addOnSuccessListener {
                 Toast.makeText(this, "Rejected: ${teacher.name}", Toast.LENGTH_SHORT).show()
+
+                val subject = "Update on your EdifyHub Application"
+                val body = "Dear ${teacher.name},\n\nThank you for your interest in EdifyHub. After careful consideration, we regret to inform you that we cannot proceed with your application at this time, Please be kind enough to try again in later times.\nIf you are unsure about this decision please be kind enough to contact lasinduthemiya96@gmail.com for reconsideration.\n\nBest regards,\nThe EdifyHub Team"
+                EmailSender.sendEmail(teacher.email, subject, body)
+
                 fetchPendingTeachers()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+    companion object {
+        fun rejectTeacherAdminManage(
+            context: Context,
+            teacherId: String,
+            teacherEmail: String,
+            teacherName: String,
+            onSuccess: () -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(teacherId)
+                .update("status", "rejected")
+                .addOnSuccessListener {
+                    // Send email
+                    val subject = "Your EdifyHub Teacher Account Has Been Rejected"
+                    val body = "Dear $teacherName,\n\nYour teacher account has been rejected by the administrator.\n\nRegards,\nEdifyHub Team"
+                    EmailSender.sendEmail(teacherEmail, subject, body)
+                    onSuccess()
+                }
+                .addOnFailureListener { e -> onFailure(e) }
+        }
+    }
+
 
     override fun onBackPressed() {
         if (!drawerHandler.onBackPressed()) {

@@ -69,3 +69,5 @@ google-services.json
 
 # Others
 .cxx/
+
+.kotlin

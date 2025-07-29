@@ -63,25 +63,63 @@
             android:drawableLeft="@drawable/institute"
             android:drawablePadding="15dp" />
 
-        <EditText
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/subject"
-            android:layout_below="@+id/institute"
-            android:background="#30ffffff"
-            android:hint="Subject"
-            android:textColorHint="@color/cardview_dark_background"
-            android:textColor="@color/surface"
+            android:id="@+id/subjectStream"
+            android:layout_below="@id/institute"
             android:layout_margin="10dp"
-            android:padding="15dp"
-            android:drawableLeft="@drawable/learn"
-            android:drawablePadding="15dp" />
+            android:orientation="horizontal"
+            android:background="#30ffffff"
+            android:padding="15dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/learn"
+                android:layout_marginEnd="10dp"/>
+
+            <Spinner
+                android:id="@+id/stream"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/studySubject"
+            android:layout_below="@id/subjectStream"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:background="#30ffffff"
+            android:padding="15dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/learn"
+                android:layout_marginEnd="10dp"/>
+
+            <Spinner
+                android:id="@+id/subject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+
+        </LinearLayout>
+
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/teacheremail"
-            android:layout_below="@+id/subject"
+            android:layout_below="@+id/studySubject"
             android:background="#30ffffff"
             android:hint="Email"
             android:textColorHint="@color/cardview_dark_background"

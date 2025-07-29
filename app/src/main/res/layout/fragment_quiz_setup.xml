@@ -80,6 +80,42 @@
                 android:minHeight="48dp"
                 android:layout_marginBottom="16dp" />
 
+            <!-- Add below the "Subject" field, before "Number of Questions" -->
+            <TextView
+                android:id="@+id/scheduled_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Scheduled Date"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/scheduled_date_text"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Select date"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:padding="8dp" />
+
+                <Button
+                    android:id="@+id/select_date_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pick Date"
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@android:color/white"/>
+            </LinearLayout>
+
             <!-- Number of Questions -->
             <TextView
                 android:layout_width="match_parent"

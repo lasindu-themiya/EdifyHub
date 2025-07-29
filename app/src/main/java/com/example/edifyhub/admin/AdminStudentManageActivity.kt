@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.edifyhub.R
@@ -12,10 +13,13 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.edifyhub.email.EmailSender
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AdminStudentManageActivity : AppCompatActivity() {
     private lateinit var students: MutableList<Student>
@@ -25,6 +29,7 @@ class AdminStudentManageActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
     private lateinit var drawerHandler: DrawerMenuHandler
     private lateinit var toolbar: Toolbar
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,34 +39,18 @@ class AdminStudentManageActivity : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
-
         drawerHandler = DrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
-        students = mutableListOf(
-            Student("1", "Alice", 18, "0712345678", "Science", "alice@email.com", R.drawable.ic_profile),
-            Student("2", "Bob", 19, "0723456789", "Commerce", "bob@email.com", R.drawable.ic_profile),
-            Student("3", "Charlie", 18, "0734567890", "Arts", "charlie@email.com", R.drawable.ic_profile),
-            Student("4", "Diana", 20, "0745678901", "Science", "diana@email.com", R.drawable.ic_profile),
-            Student("5", "Ethan", 17, "0756789012", "Commerce", "ethan@email.com", R.drawable.ic_profile),
-            Student("6", "Fiona", 18, "0767890123", "Arts", "fiona@email.com", R.drawable.ic_profile),
-            Student("7", "George", 19, "0778901234", "Science", "george@email.com", R.drawable.ic_profile),
-            Student("8", "Hannah", 18, "0789012345", "Commerce", "hannah@email.com", R.drawable.ic_profile),
-            Student("9", "Ian", 20, "0790123456", "Arts", "ian@email.com", R.drawable.ic_profile),
-            Student("10", "Julia", 17, "0701234567", "Science", "julia@email.com", R.drawable.ic_profile),
-            Student("11", "Kevin", 18, "0712345671", "Commerce", "kevin@email.com", R.drawable.ic_profile),
-            Student("12", "Laura", 19, "0723456782", "Arts", "laura@email.com", R.drawable.ic_profile),
-            Student("13", "Mike", 18, "0734567893", "Science", "mike@email.com", R.drawable.ic_profile),
-            Student("14", "Nina", 20, "0745678904", "Commerce", "nina@email.com", R.drawable.ic_profile),
-            Student("15", "Oscar", 17, "0756789015", "Arts", "oscar@email.com", R.drawable.ic_profile),
-            Student("16", "Paula", 18, "0767890126", "Science", "paula@email.com", R.drawable.ic_profile),
-            Student("17", "Quentin", 19, "0778901237", "Commerce", "quentin@email.com", R.drawable.ic_profile),
-            Student("18", "Rachel", 18, "0789012348", "Arts", "rachel@email.com", R.drawable.ic_profile),
-            Student("19", "Sam", 20, "0790123459", "Science", "sam@email.com", R.drawable.ic_profile),
-            Student("20", "Tina", 17, "0701234560", "Commerce", "tina@email.com", R.drawable.ic_profile)
-        )
+        students = mutableListOf()
+        filteredStudents = mutableListOf()
 
-        filteredStudents = students.toMutableList() //return an arraylist of thr mutableList
+        setupRecyclerView()
+        setupSearch()
 
+        fetchStudents()
+    }
+
+    private fun setupRecyclerView() {
         val rvStudents = findViewById<RecyclerView>(R.id.rvStudents)
         adapter = StudentAdapter(
             filteredStudents,
@@ -71,24 +60,54 @@ class AdminStudentManageActivity : AppCompatActivity() {
         )
         rvStudents.layoutManager = LinearLayoutManager(this)
         rvStudents.adapter = adapter
+    }
 
+    private fun fetchStudents() {
+        db.collection("users")
+            .whereEqualTo("userRole", "student")
+            .get()
+            .addOnSuccessListener { result ->
+                students.clear()
+                for (document in result) {
+                    val student = Student(
+                        id = document.id,
+                        name = document.getString("username") ?: "",
+                        age = document.getString("age")?.toIntOrNull() ?: 0,
+                        mobile = document.getString("mobile") ?: "",
+                        stream = document.getString("stream") ?: "",
+                        email = document.getString("email") ?: ""
+                    )
+                    students.add(student)
+                }
+                filterStudents("")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error fetching students: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun setupSearch() {
         val etSearch = findViewById<EditText>(R.id.etSearch)
         etSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val query = s.toString().trim().lowercase()
-                filteredStudents.clear()
-                if (query.isEmpty()) {
-                    filteredStudents.addAll(students)
-                } else {
-                    filteredStudents.addAll(
-                        students.filter { it.name.lowercase().contains(query) }
-                    )
-                }
-                adapter.notifyDataSetChanged()
+                filterStudents(s.toString())
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+    private fun filterStudents(query: String) {
+        val lowerCaseQuery = query.lowercase().trim()
+        filteredStudents.clear()
+        if (lowerCaseQuery.isEmpty()) {
+            filteredStudents.addAll(students)
+        } else {
+            filteredStudents.addAll(
+                students.filter { it.name.lowercase().contains(lowerCaseQuery) }
+            )
+        }
+        adapter.notifyDataSetChanged()
     }
 
     private fun showStudentDialog(student: Student) {
@@ -107,8 +126,10 @@ class AdminStudentManageActivity : AppCompatActivity() {
     }
 
     private fun showEditFragment(student: Student) {
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, EditStudentFragment.newInstance(student))
+            .addToBackStack(null)
             .commit()
         findViewById<android.view.View>(R.id.fragmentContainer).visibility = android.view.View.VISIBLE
     }
@@ -116,14 +137,45 @@ class AdminStudentManageActivity : AppCompatActivity() {
     private fun confirmDelete(student: Student) {
         AlertDialog.Builder(this)
             .setTitle("Delete Student")
-            .setMessage("Are you sure you want to delete ${student.name}?")
+            .setMessage("Are you sure you want to delete ${student.name}? This will permanently remove their data and access.")
             .setPositiveButton("Delete") { dialog, _ ->
-                students.remove(student)
-                filteredStudents.remove(student)
-                adapter.notifyDataSetChanged()
+                deleteStudent(student)
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    private fun deleteStudent(student: Student) {
+
+        db.collection("users").document(student.id)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "${student.name} has been deleted.", Toast.LENGTH_SHORT).show()
+
+                val subject = "Account Deletion from EdifyHub"
+                val body = "Dear ${student.name},\n\nThis email is to inform you that your account has been removed from the EdifyHub platform by an administrator. You will no longer be able to make any interaction with the platform.\nIf you aren't willing to accept this kindly contact system administration lasinduthemiya96@gmail.com.\n\nThank you,\nThe EdifyHub Team"
+                EmailSender.sendEmail(student.email, subject, body)
+
+                fetchStudents()
+
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error deleting student: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    fun onStudentUpdated() {
+        supportFragmentManager.popBackStack()
+        findViewById<android.view.View>(R.id.fragmentContainer).visibility = android.view.View.GONE
+        fetchStudents()
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            onStudentUpdated()
+        } else if (!drawerHandler.onBackPressed()) {
+            super.onBackPressed()
+        }
     }
 }

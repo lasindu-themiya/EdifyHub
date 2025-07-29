@@ -10,6 +10,11 @@
         android:icon="@drawable/ic_teacher" />
 
     <item
+        android:id="@+id/nav_manageteachers"
+        android:title="Manage Teachers"
+        android:icon="@drawable/ic_teacher" />
+
+    <item
         android:id="@+id/nav_approve"
         android:title="Approve Teachers"
         android:icon="@drawable/ic_approval" />

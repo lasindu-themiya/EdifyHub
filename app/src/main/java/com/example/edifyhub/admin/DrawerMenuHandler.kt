@@ -54,9 +54,15 @@ class DrawerMenuHandler(
                 (context as? AppCompatActivity)?.finish()
             }
             R.id.nav_managestudent -> {
-                Toast.makeText(context, "Teachers clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Manage Students clicked", Toast.LENGTH_SHORT).show()
                 context.startActivity(Intent(context, AdminStudentManageActivity::class.java))
-                (context as? AppCompatActivity)?.finish()            }
+                (context as? AppCompatActivity)?.finish()
+            }
+            R.id.nav_manageteachers -> {
+                Toast.makeText(context, "Manage Teachers clicked", Toast.LENGTH_SHORT).show()
+                context.startActivity(Intent(context, AdminTeacherManageActivity::class.java))
+                (context as? AppCompatActivity)?.finish()
+            }
             R.id.nav_approve -> {
                 Toast.makeText(context, "Approvals clicked", Toast.LENGTH_SHORT).show()
                 context.startActivity(Intent(context, AdminApprovalActivity::class.java))

@@ -1,17 +1,18 @@
 package com.example.edifyhub.admin
 
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
-import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AdminDashboardActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -19,6 +20,7 @@ class AdminDashboardActivity : AppCompatActivity() {
     private lateinit var drawerHandler: DrawerMenuHandler
     private lateinit var toolbar: Toolbar
 
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,20 +31,31 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
-
         drawerHandler = DrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
+        findViewById<TextView>(R.id.tvMonthlyRevenue).text = "Rs. 250000"
 
-        // Example data
-        val studentCount = 120
-        val teacherCount = 15
-        val monthlyRevenue = 250000
-
-        findViewById<TextView>(R.id.tvStudentCount).text = studentCount.toString()
-        findViewById<TextView>(R.id.tvTeacherCount).text = teacherCount.toString()
-        findViewById<TextView>(R.id.tvMonthlyRevenue).text = "Rs. $monthlyRevenue"
-
+        fetchUserCounts()
         setupLineChart()
+    }
+
+    private fun fetchUserCounts() {
+        val tvStudentCount = findViewById<TextView>(R.id.tvStudentCount)
+        val tvTeacherCount = findViewById<TextView>(R.id.tvTeacherCount)
+
+        db.collection("users")
+            .whereEqualTo("userRole", "student")
+            .get()
+            .addOnSuccessListener { result ->
+                tvStudentCount.text = result.size().toString()
+            }
+
+        db.collection("users")
+            .whereEqualTo("userRole", "teacher")
+            .get()
+            .addOnSuccessListener { result ->
+                tvTeacherCount.text = result.size().toString()
+            }
     }
 
     private fun setupLineChart() {

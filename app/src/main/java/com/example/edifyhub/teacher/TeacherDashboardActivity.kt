@@ -18,22 +18,25 @@ class TeacherDashboardActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
     private lateinit var drawerHandler: TeacherDrawerMenuHandler
     private lateinit var toolbar: Toolbar
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_dashboard)
 
-        // ✅ Fix toolbar and drawer IDs to match layout
+        // Get USER_ID from intent
+        userId = intent.getStringExtra("USER_ID")
+
         toolbar = findViewById(R.id.teacherToolbar)
         setSupportActionBar(toolbar)
 
         drawerLayout = findViewById(R.id.teacherDrawerLayout)
         navigationView = findViewById(R.id.navigationView)
+        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar, userId)
 
-        // ✅ Assuming TeacherDrawerMenuHandler is implemented properly
-        drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
+        // Example: Use userId (e.g., fetch teacher data)
+        // if (userId != null) { ... }
 
-        // Sample data setup
         val quizeCount = 70
         val classesCount = 19
         val monthlyRevenue = 230500
