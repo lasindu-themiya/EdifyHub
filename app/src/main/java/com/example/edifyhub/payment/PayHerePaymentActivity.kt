@@ -54,7 +54,7 @@ class PayHerePaymentActivity : Activity() {
         teacherName = intent.getStringExtra("teacherName")
 
         txtQuizTitle.text = quizName ?: "Quiz"
-        val totalAmount = quizAmount * 1.033
+        val totalAmount = quizAmount * 1.03437
         txtAmount.text = "Amount: Rs. %.2f (incl. 3.3%% fee)".format(totalAmount)
 
         payButton.setOnClickListener {
