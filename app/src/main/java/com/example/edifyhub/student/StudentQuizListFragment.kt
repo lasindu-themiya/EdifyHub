@@ -1,14 +1,19 @@
 package com.example.edifyhub.student
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
+import com.example.edifyhub.payment.PayHerePaymentActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import java.util.*
 
 class StudentQuizListFragment : Fragment() {
@@ -17,10 +22,17 @@ class StudentQuizListFragment : Fragment() {
     private var userId: String? = null
     private val attemptedQuizIds = mutableSetOf<String>()
     private val paidQuizIds = mutableSetOf<String>()
+    private var paidQuizzesListener: ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userId = arguments?.getString("USER_ID")
+    }
+
+    private val paymentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // No need to manually refresh, listener will auto-update
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -40,7 +52,16 @@ class StudentQuizListFragment : Fragment() {
                 quizAdapter = QuizAdapter(
                     onAttendClick = { quizItem -> showAttendQuizFragment(quizItem) },
                     onViewQuizClick = { quizItem -> showViewQuizFragment(quizItem) },
-                    onPayClick = { quizItem -> handlePayQuiz(quizItem) },
+                    onPayClick = { quizItem ->
+                        val intent = Intent(requireContext(), PayHerePaymentActivity::class.java).apply {
+                            putExtra("quizId", quizItem.id)
+                            putExtra("quizName", quizItem.name)
+                            putExtra("quizAmount", quizItem.amount)
+                            putExtra("teacherId", quizItem.teacherId)
+                            putExtra("teacherName", quizItem.teacherName)
+                        }
+                        paymentLauncher.launch(intent)
+                    },
                     attemptedQuizIds = attemptedQuizIds,
                     paidQuizIds = paidQuizIds
                 )
@@ -53,6 +74,9 @@ class StudentQuizListFragment : Fragment() {
                     quizAdapter.submitList(quizzes)
                     progressBar.visibility = View.GONE
                 }
+
+                // Only start listening after adapter is initialized
+                listenForPaidQuizzesUpdates()
             }
         }
 
@@ -178,7 +202,29 @@ class StudentQuizListFragment : Fragment() {
     }
 
     private fun handlePayQuiz(quizItem: QuizItem) {
-        // Redirect to student dashboard
         parentFragmentManager.popBackStack(null, 0)
+    }
+
+    private fun listenForPaidQuizzesUpdates() {
+        val db = FirebaseFirestore.getInstance()
+        if (userId == null) return
+        paidQuizzesListener?.remove()
+        paidQuizzesListener = db.collection("users").document(userId!!)
+            .collection("paidQuizzes")
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null) {
+                    paidQuizIds.clear()
+                    paidQuizIds.addAll(snapshot.documents.map { it.id })
+                    if (::quizAdapter.isInitialized) {
+                        quizAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        paidQuizzesListener?.remove()
+        paidQuizzesListener = null
     }
 }

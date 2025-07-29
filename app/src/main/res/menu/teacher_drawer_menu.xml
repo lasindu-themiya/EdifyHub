@@ -17,7 +17,13 @@
     <item
         android:id="@+id/nav_schedule"
         android:title="Schedule"
-        android:icon="@drawable/ic_schedule" /> <!-- Add this line -->
+        android:icon="@drawable/ic_schedule" />
+
+    <item
+        android:id="@+id/nav_payment_details"
+        android:title="Payment Details"
+        android:icon="@drawable/ic_card" />
+
 
     <item
         android:id="@+id/nav_logout"
