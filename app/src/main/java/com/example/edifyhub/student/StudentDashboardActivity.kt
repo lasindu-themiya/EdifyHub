@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
-import com.example.edifyhub.login.StudentSignupActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -40,45 +39,63 @@ class StudentDashboardActivity : AppCompatActivity() {
         drawerHandler = StudentDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
 
-//        val completedQuizzes = 64
-        val upComingQuizzes = 27
         val postedDiscussions = 30
 
-//        findViewById<TextView>(R.id.completedQuizzes).text = completedQuizzes.toString()
-        findViewById<TextView>(R.id.upComingQuizzes).text = upComingQuizzes.toString()
         findViewById<TextView>(R.id.postedDiscussions).text = postedDiscussions.toString()
 
 
         if(userId != null){
             db.collection("users").document(userId!!).get()
-                .addOnSuccessListener { document ->
-                    if(document != null && document.exists()){
-                        val username = document.getString("username") ?: "student"
-                        findViewById<TextView>(R.id.username).text = "Hello, $username"
-                    }else{
-                        findViewById<TextView>(R.id.username).text = "Hello, Student"
-                    }
-                }
-                .addOnFailureListener { exception ->
+            .addOnSuccessListener { document ->
+                if(document != null && document.exists()){
+                    val username = document.getString("username") ?: "student"
+                    findViewById<TextView>(R.id.username).text = "Hello, $username"
+                }else{
                     findViewById<TextView>(R.id.username).text = "Hello, Student"
                 }
+            }
+            .addOnFailureListener { exception ->
+                findViewById<TextView>(R.id.username).text = "Hello, Student"
+            }
         }
 
-        // get completed quizzes
+        // get completed quizzes & success rate
         if (userId != null) {
             userId?.let { safeUserId ->
                 db.collection("users")
-                    .document(safeUserId)
-                    .collection("attemptedQuizzes")
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        val total = documents.size()
-                        findViewById<TextView>(R.id.completedQuizzes).text = "$total"
+                .document(safeUserId)
+                .collection("attemptedQuizzes")
+                .get()
+                .addOnSuccessListener { documents ->
+                    val totalDocs = documents.size()
+                    var sumOfAverages = 0.0
+
+                    for (doc in documents) {
+                        val score = doc.getLong("score")?.toDouble() ?: 0.0
+                        val total = doc.getLong("total")?.toDouble() ?: 1.0 // avoid divide by zero
+
+                        val quizAverage = score / total
+                        val cappedAverage = minOf(quizAverage, 1.0) // cap at 100% if needed
+
+                        sumOfAverages += cappedAverage
                     }
-                    .addOnFailureListener {
-                        findViewById<TextView>(R.id.completedQuizzes).text = "0"
-                    }
+
+                    val finalAverage = if (totalDocs > 0) sumOfAverages / totalDocs else 0.0
+                    val percentage = finalAverage * 100
+
+                    // completed quizzes
+                    findViewById<TextView>(R.id.completedQuizzes).text = "$totalDocs"
+
+                    // success rate
+                    val successRateText = "${String.format("%.2f", percentage)}%"
+                    findViewById<TextView>(R.id.rate).text = successRateText
+
                 }
+                .addOnFailureListener {
+                    findViewById<TextView>(R.id.completedQuizzes).text = "0"
+                    findViewById<TextView>(R.id.rate).text = "Success Rate: 0.00%"
+                }
+            }
         }
 
 
@@ -86,7 +103,6 @@ class StudentDashboardActivity : AppCompatActivity() {
         val searchQuizzes = findViewById<ImageButton>(R.id.searchQuizzes)
         searchQuizzes.setOnClickListener {
             val intent = Intent(this, StudentQuizListActivity::class.java)
-            // Pass userId to next activity if needed
             intent.putExtra("USER_ID", userId)
             startActivity(intent)
         }

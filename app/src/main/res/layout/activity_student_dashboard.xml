@@ -134,10 +134,10 @@
                             android:gravity="center">
 
                             <TextView
-                                android:id="@+id/upComingQuizzes"
+                                android:id="@+id/rate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="0"
+                                android:text="0%"
                                 android:textStyle="bold"
                                 android:textSize="32sp"
                                 android:textColor="@color/surface"/>
@@ -145,7 +145,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Up Coming Quizzes"
+                                android:text="Success Rate"
                                 android:textSize="16sp"
                                 android:textColor="@color/surface"/>
                         </LinearLayout>
