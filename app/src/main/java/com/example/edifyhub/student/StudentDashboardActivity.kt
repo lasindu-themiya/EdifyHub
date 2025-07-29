@@ -40,11 +40,11 @@ class StudentDashboardActivity : AppCompatActivity() {
         drawerHandler = StudentDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
 
-        val completedQuizzes = 64
+//        val completedQuizzes = 64
         val upComingQuizzes = 27
         val postedDiscussions = 30
 
-        findViewById<TextView>(R.id.completedQuizzes).text = completedQuizzes.toString()
+//        findViewById<TextView>(R.id.completedQuizzes).text = completedQuizzes.toString()
         findViewById<TextView>(R.id.upComingQuizzes).text = upComingQuizzes.toString()
         findViewById<TextView>(R.id.postedDiscussions).text = postedDiscussions.toString()
 
@@ -64,10 +64,28 @@ class StudentDashboardActivity : AppCompatActivity() {
                 }
         }
 
+        // get completed quizzes
+        if (userId != null) {
+            userId?.let { safeUserId ->
+                db.collection("users")
+                    .document(safeUserId)
+                    .collection("attemptedQuizzes")
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        val total = documents.size()
+                        findViewById<TextView>(R.id.completedQuizzes).text = "$total"
+                    }
+                    .addOnFailureListener {
+                        findViewById<TextView>(R.id.completedQuizzes).text = "0"
+                    }
+                }
+        }
+
+
 
         val searchQuizzes = findViewById<ImageButton>(R.id.searchQuizzes)
         searchQuizzes.setOnClickListener {
-            val intent = Intent(this, StudentSignupActivity::class.java)
+            val intent = Intent(this, StudentQuizListActivity::class.java)
             // Pass userId to next activity if needed
             intent.putExtra("USER_ID", userId)
             startActivity(intent)
