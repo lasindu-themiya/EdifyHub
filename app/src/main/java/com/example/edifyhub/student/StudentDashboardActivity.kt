@@ -93,7 +93,7 @@ class StudentDashboardActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener {
                     findViewById<TextView>(R.id.completedQuizzes).text = "0"
-                    findViewById<TextView>(R.id.rate).text = "Success Rate: 0.00%"
+                    findViewById<TextView>(R.id.rate).text = "0.00%"
                 }
             }
         }
