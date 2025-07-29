@@ -18,6 +18,10 @@
         android:title="Attempted Quizzes"
         android:icon="@drawable/ic_history" />
     <item
+        android:id="@+id/nav_student_view_teachers"
+        android:title="View Teachers"
+        android:icon="@drawable/ic_teacher" />
+    <item
         android:id="@+id/nav_logout"
         android:title="Logout"
         android:icon="@drawable/ic_logout" />
