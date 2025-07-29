@@ -25,7 +25,7 @@ class TeacherQuizScheduleFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_teacher_quiz_schedule, container, false)
         recyclerView = root.findViewById(R.id.quiz_schedule_recycler)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = QuizScheduleAdapter()
+        adapter = QuizScheduleAdapter(userId)
         recyclerView.adapter = adapter
         fetchQuizzes()
         return root
