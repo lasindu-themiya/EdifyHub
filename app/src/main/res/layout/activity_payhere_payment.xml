@@ -47,7 +47,7 @@
             android:id="@+id/btnPayHere"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pay with PayHere Sandbox"
+            android:text="Pay with PayHere"
             android:backgroundTint="@color/primary"
             android:textColor="@color/white"
             android:letterSpacing="0.03"
