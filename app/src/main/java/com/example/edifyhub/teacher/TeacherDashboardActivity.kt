@@ -12,19 +12,24 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Calendar
 
 class TeacherDashboardActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var drawerHandler: TeacherDrawerMenuHandler
     private lateinit var toolbar: Toolbar
+    private lateinit var db: FirebaseFirestore
     private var userId: String? = null
+
+    private val monthlyRevenue = DoubleArray(12) { 0.0 }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_dashboard)
 
-        // Get USER_ID from intent
+        db = FirebaseFirestore.getInstance()
         userId = intent.getStringExtra("USER_ID")
 
         toolbar = findViewById(R.id.teacherToolbar)
@@ -34,36 +39,82 @@ class TeacherDashboardActivity : AppCompatActivity() {
         navigationView = findViewById(R.id.navigationView)
         drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar, userId)
 
-        // Example: Use userId (e.g., fetch teacher data)
-        // if (userId != null) { ... }
+        if (userId != null) {
+            fetchMonthlyRevenue(userId!!)
+            loadTotalQuizzes(userId!!)
+        }
 
-        val quizeCount = 70
-        val classesCount = 19
-        val monthlyRevenue = 230500
+        setupLineChart()
 
-        findViewById<TextView>(R.id.totalQuizesCount).text = quizeCount.toString()
-        findViewById<TextView>(R.id.upComingClassesCount).text = classesCount.toString()
-        findViewById<TextView>(R.id.teacherTotalRevenue).text = "Rs. $monthlyRevenue"
+        // Example placeholders
+        findViewById<TextView>(R.id.upComingClassesCount).text = "19"
+    }
 
+    private fun fetchMonthlyRevenue(userId: String) {
+        db.collection("users")
+            .document(userId)
+            .collection("quizzes")
+            .whereEqualTo("paid", true)
+            .get()
+            .addOnSuccessListener { quizzes ->
+                if (quizzes.isEmpty) {
+                    updateRevenueUI()
+                    return@addOnSuccessListener
+                }
+
+                var processed = 0
+                quizzes.forEach { quiz ->
+                    val amount = quiz.getLong("amount")?.toDouble() ?: 0.0
+                    val quizId = quiz.id
+
+                    db.collection("users")
+                        .document(userId)
+                        .collection("quizzes")
+                        .document(quizId)
+                        .collection("attempts")
+                        .get()
+                        .addOnSuccessListener { attempts ->
+                            attempts.forEach { attempt ->
+                                val timestamp = attempt.getTimestamp("timestamp")?.toDate()
+                                if (timestamp != null) {
+                                    val cal = Calendar.getInstance()
+                                    cal.time = timestamp
+                                    val month = cal.get(Calendar.MONTH) // 0 = Jan
+
+                                    monthlyRevenue[month] += amount
+                                }
+                            }
+
+                            processed++
+                            if (processed == quizzes.size()) {
+                                updateRevenueUI()
+                            }
+                        }
+                        .addOnFailureListener {
+                            processed++
+                            if (processed == quizzes.size()) {
+                                updateRevenueUI()
+                            }
+                        }
+                }
+            }
+    }
+
+    private fun updateRevenueUI() {
+        // Update total revenue text
+        val total = monthlyRevenue.sum()
+        findViewById<TextView>(R.id.teacherTotalRevenue).text = "Rs. ${String.format("%.2f", total)}"
+
+        // Now refresh the chart with real data
         setupLineChart()
     }
 
     private fun setupLineChart() {
         val lineChart = findViewById<LineChart>(R.id.teacherLineChart)
-        val entries = listOf(
-            Entry(0f, 20500f),
-            Entry(1f, 30000f),
-            Entry(2f, 25000f),
-            Entry(3f, 40000f),
-            Entry(4f, 35000f),
-            Entry(5f, 50000f),
-            Entry(6f, 45000f),
-            Entry(7f, 60000f),
-            Entry(8f, 55000f),
-            Entry(9f, 70000f),
-            Entry(10f, 65000f),
-            Entry(11f, 80000f)
-        )
+        val entries = monthlyRevenue.mapIndexed { index, revenue ->
+            Entry(index.toFloat(), revenue.toFloat())
+        }
+
         val dataSet = LineDataSet(entries, "Revenue (Rs.)").apply {
             color = getColor(R.color.primary)
             valueTextColor = getColor(R.color.text_primary)
@@ -88,5 +139,19 @@ class TeacherDashboardActivity : AppCompatActivity() {
             animateY(1000)
             invalidate()
         }
+    }
+
+
+    private fun loadTotalQuizzes(userId: String) {
+        db.collection("users")
+            .document(userId)
+            .collection("quizzes")
+            .get()
+            .addOnSuccessListener { documents ->
+                findViewById<TextView>(R.id.totalQuizesCount).text = "${documents.size()}"
+            }
+            .addOnFailureListener {
+                findViewById<TextView>(R.id.totalQuizesCount).text = "0"
+            }
     }
 }
