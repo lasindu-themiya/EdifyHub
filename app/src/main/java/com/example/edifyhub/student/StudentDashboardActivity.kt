@@ -39,11 +39,6 @@ class StudentDashboardActivity : AppCompatActivity() {
         drawerHandler = StudentDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
 
-        val postedDiscussions = 30
-
-        findViewById<TextView>(R.id.postedDiscussions).text = postedDiscussions.toString()
-
-
         if(userId != null){
             db.collection("users").document(userId!!).get()
             .addOnSuccessListener { document ->
