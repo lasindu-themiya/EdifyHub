@@ -22,6 +22,10 @@
         android:title="View Teachers"
         android:icon="@drawable/ic_teacher" />
     <item
+        android:id="@+id/nav_create_discussion"
+        android:title="Create Discussion"
+        android:icon="@drawable/ic_discussion" />
+    <item
         android:id="@+id/nav_logout"
         android:title="Logout"
         android:icon="@drawable/ic_logout" />

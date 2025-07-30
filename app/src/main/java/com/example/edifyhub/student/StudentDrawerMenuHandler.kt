@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.example.edifyhub.login.LoginActivity
+import com.example.edifyhub.student.StudentCreateDiscussionActivity
 import com.example.edifyhub.student.StudentDashboardActivity
 import com.example.edifyhub.student.StudentProfileUpdateActivity
 import com.example.edifyhub.student.StudentQuizListActivity
@@ -83,6 +84,16 @@ class StudentDrawerMenuHandler(
             R.id.nav_student_view_teachers -> {
                 Toast.makeText(context, "View Teachers clicked", Toast.LENGTH_SHORT).show()
                 val intent = Intent(context, StudentTeacherListActivity::class.java)
+                intent.putExtra("USER_ID", userId)
+                context.startActivity(intent)
+                (context as? AppCompatActivity)?.finish()
+                drawerLayout.closeDrawers()
+                return true
+            }
+            // Inside onNavigationItemSelected:
+            R.id.nav_create_discussion -> {
+                Toast.makeText(context, "Create Discussion clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, StudentCreateDiscussionActivity::class.java)
                 intent.putExtra("USER_ID", userId)
                 context.startActivity(intent)
                 (context as? AppCompatActivity)?.finish()
