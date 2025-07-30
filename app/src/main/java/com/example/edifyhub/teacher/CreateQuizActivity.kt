@@ -16,6 +16,10 @@ class CreateQuizActivity : AppCompatActivity() {
     private lateinit var toolbar: Toolbar
     private var userId: String? = null
 
+    // Public getter for userId
+    val getUserId: String?
+        get() = userId
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_quiz)

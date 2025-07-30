@@ -15,6 +15,7 @@ import com.example.edifyhub.payment.PayHerePaymentActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import java.util.*
+import kotlin.text.get
 
 class StudentQuizListFragment : Fragment() {
     private lateinit var quizAdapter: QuizAdapter
@@ -23,6 +24,9 @@ class StudentQuizListFragment : Fragment() {
     private val attemptedQuizIds = mutableSetOf<String>()
     private val paidQuizIds = mutableSetOf<String>()
     private var paidQuizzesListener: ListenerRegistration? = null
+    private var studentStream: String? = null
+    private val streamSubjects = mutableSetOf<String>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,40 +47,66 @@ class StudentQuizListFragment : Fragment() {
         val teacherSearch = root.findViewById<EditText>(R.id.teacherSearch)
 
         progressBar.visibility = View.VISIBLE
-        fetchAttemptedQuizIds { ids ->
-            attemptedQuizIds.clear()
-            attemptedQuizIds.addAll(ids)
-            fetchPaidQuizIds { paidIds ->
-                paidQuizIds.clear()
-                paidQuizIds.addAll(paidIds)
+
+        // Fetch student stream first
+        fetchStudentStream { stream ->
+            studentStream = stream
+            if (stream != null) {
+                fetchStreamSubjects(stream) { subjects ->
+                    streamSubjects.clear()
+                    streamSubjects.addAll(subjects)
+                    fetchAttemptedQuizIds { ids ->
+                        attemptedQuizIds.clear()
+                        attemptedQuizIds.addAll(ids)
+                        fetchPaidQuizIds { paidIds ->
+                            paidQuizIds.clear()
+                            paidQuizIds.addAll(paidIds)
+                            quizAdapter = QuizAdapter(
+                                onAttendClick = { quizItem -> showAttendQuizFragment(quizItem) },
+                                onViewQuizClick = { quizItem -> showViewQuizFragment(quizItem) },
+                                onPayClick = { quizItem ->
+                                    val intent = Intent(requireContext(), PayHerePaymentActivity::class.java).apply {
+                                        putExtra("quizId", quizItem.id)
+                                        putExtra("quizName", quizItem.name)
+                                        putExtra("quizAmount", quizItem.amount)
+                                        putExtra("teacherId", quizItem.teacherId)
+                                        putExtra("teacherName", quizItem.teacherName)
+                                    }
+                                    paymentLauncher.launch(intent)
+                                },
+                                attemptedQuizIds = attemptedQuizIds,
+                                paidQuizIds = paidQuizIds
+                            )
+                            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                            recyclerView.adapter = quizAdapter
+
+                            fetchQuizzes { quizzes ->
+                                // Filter quizzes by stream subjects
+                                val filteredQuizzes = quizzes.filter { streamSubjects.contains(it.subject) }
+                                allQuizzes.clear()
+                                allQuizzes.addAll(filteredQuizzes)
+                                quizAdapter.submitList(filteredQuizzes)
+                                progressBar.visibility = View.GONE
+                            }
+
+                            listenForPaidQuizzesUpdates()
+                        }
+                    }
+                }
+            } else {
+                // If stream is not found, show no quizzes
+                allQuizzes.clear()
                 quizAdapter = QuizAdapter(
                     onAttendClick = { quizItem -> showAttendQuizFragment(quizItem) },
                     onViewQuizClick = { quizItem -> showViewQuizFragment(quizItem) },
-                    onPayClick = { quizItem ->
-                        val intent = Intent(requireContext(), PayHerePaymentActivity::class.java).apply {
-                            putExtra("quizId", quizItem.id)
-                            putExtra("quizName", quizItem.name)
-                            putExtra("quizAmount", quizItem.amount)
-                            putExtra("teacherId", quizItem.teacherId)
-                            putExtra("teacherName", quizItem.teacherName)
-                        }
-                        paymentLauncher.launch(intent)
-                    },
+                    onPayClick = { quizItem -> /* ... */ },
                     attemptedQuizIds = attemptedQuizIds,
                     paidQuizIds = paidQuizIds
                 )
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 recyclerView.adapter = quizAdapter
-
-                fetchQuizzes { quizzes ->
-                    allQuizzes.clear()
-                    allQuizzes.addAll(quizzes)
-                    quizAdapter.submitList(quizzes)
-                    progressBar.visibility = View.GONE
-                }
-
-                // Only start listening after adapter is initialized
-                listenForPaidQuizzesUpdates()
+                quizAdapter.submitList(emptyList())
+                progressBar.visibility = View.GONE
             }
         }
 
@@ -226,5 +256,30 @@ class StudentQuizListFragment : Fragment() {
         super.onDestroyView()
         paidQuizzesListener?.remove()
         paidQuizzesListener = null
+    }
+
+    private fun fetchStudentStream(onResult: (String?) -> Unit) {
+        if (userId == null) {
+            onResult(null)
+            return
+        }
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userId!!)
+            .get()
+            .addOnSuccessListener { doc ->
+                val stream = doc.getString("stream")
+                onResult(stream)
+            }
+            .addOnFailureListener { onResult(null) }
+    }
+    private fun fetchStreamSubjects(stream: String, onResult: (Set<String>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("streams").document(stream)
+            .get()
+            .addOnSuccessListener { doc ->
+                val subjects = doc.get("subjects") as? List<String> ?: emptyList()
+                onResult(subjects.toSet())
+            }
+            .addOnFailureListener { onResult(emptySet()) }
     }
 }

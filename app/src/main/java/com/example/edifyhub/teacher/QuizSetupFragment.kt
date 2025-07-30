@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.example.edifyhub.R
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,9 +27,24 @@ class QuizSetupFragment : Fragment() {
         val paidCheckBox = view.findViewById<CheckBox>(R.id.paid_checkbox)
         val amountEditText = view.findViewById<EditText>(R.id.amount)
         val nextButton = view.findViewById<Button>(R.id.next_button)
-
         val scheduledDateText = view.findViewById<TextView>(R.id.scheduled_date_text)
         val selectDateButton = view.findViewById<Button>(R.id.select_date_button)
+
+        // Get userId from parent activity
+        val userId = (activity as? CreateQuizActivity)?.getUserId
+
+        // Load teacher's subject from Firestore
+        userId?.let { uid ->
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(uid)
+                .get()
+                .addOnSuccessListener { doc ->
+                    if (doc.exists()) {
+                        val subject = doc.getString("subject") ?: ""
+                        subjectEditText.setText(subject)
+                    }
+                }
+        }
 
         paidCheckBox.setOnCheckedChangeListener { _, isChecked ->
             amountEditText.visibility = if (isChecked) View.VISIBLE else View.GONE
