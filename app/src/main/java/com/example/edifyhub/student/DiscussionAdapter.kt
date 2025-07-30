@@ -11,9 +11,11 @@ import com.example.edifyhub.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 class DiscussionAdapter(
-    private val userId: String,
+    private val ownerUserId: String,
     private var discussions: List<Discussion>,
-    private val onRefresh: () -> Unit
+    private val loggedInUserId: String,
+    private val onRefresh: () -> Unit,
+    private val onChatClick: (ownerUserId: String, discussionId: String, loggedInUserId: String) -> Unit
 ) : RecyclerView.Adapter<DiscussionAdapter.DiscussionViewHolder>() {
 
     inner class DiscussionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -55,7 +57,7 @@ class DiscussionAdapter(
                 .setMessage("Are you sure you want to close this discussion?")
                 .setPositiveButton("Yes") { _, _ ->
                     val db = FirebaseFirestore.getInstance()
-                    db.collection("users").document(userId)
+                    db.collection("users").document(ownerUserId)
                         .collection("discussions").document(discussion.id)
                         .update("status", "close")
                         .addOnSuccessListener {
@@ -67,7 +69,9 @@ class DiscussionAdapter(
                 .show()
         }
 
-        // Chat button: no listener for now
+        holder.btnChat.setOnClickListener {
+            onChatClick(ownerUserId, discussion.id, loggedInUserId)
+        }
     }
 
     override fun getItemCount(): Int = discussions.size

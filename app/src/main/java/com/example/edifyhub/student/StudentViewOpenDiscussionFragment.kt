@@ -11,16 +11,23 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class StudentViewOpenDiscussionFragment : Fragment() {
 
-    private var userId: String? = null
+    private var ownerUserId: String? = null
+    private var loggedInUserId: String? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DiscussionAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_student_view_open_discussion, container, false)
-        userId = arguments?.getString("USER_ID")
+        ownerUserId = arguments?.getString("USER_ID")
         recyclerView = view.findViewById(R.id.recyclerViewDiscussions)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = DiscussionAdapter(userId ?: "", emptyList()) { fetchOpenDiscussions() }
+        adapter = DiscussionAdapter(
+            ownerUserId ?: "",
+            emptyList(),
+            loggedInUserId ?: "",
+            onRefresh = { fetchOpenDiscussions() },
+            onChatClick = { ownerId, discussionId, loggedId -> navigateToChatFragment(ownerId, discussionId, loggedId) }
+        )
         recyclerView.adapter = adapter
 
         fetchOpenDiscussions()
@@ -29,7 +36,7 @@ class StudentViewOpenDiscussionFragment : Fragment() {
 
     private fun fetchOpenDiscussions() {
         val db = FirebaseFirestore.getInstance()
-        userId?.let { uid ->
+        ownerUserId?.let { uid ->
             db.collection("users").document(uid)
                 .collection("discussions")
                 .whereEqualTo("status", "open")
@@ -51,5 +58,19 @@ class StudentViewOpenDiscussionFragment : Fragment() {
                     Toast.makeText(requireContext(), "Failed to load discussions.", Toast.LENGTH_SHORT).show()
                 }
         }
+    }
+
+    private fun navigateToChatFragment(ownerUserId: String, discussionId: String, loggedInUserId: String) {
+        val fragment = StudentDiscussionChatFragment().apply {
+            arguments = Bundle().apply {
+                putString("USER_ID", ownerUserId)
+                putString("DISCUSSION_ID", discussionId)
+                putString("LOGGED_IN_USER_ID", ownerUserId)
+            }
+        }
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

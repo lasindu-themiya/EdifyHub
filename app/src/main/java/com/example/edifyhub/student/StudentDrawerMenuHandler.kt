@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.example.edifyhub.login.LoginActivity
+import com.example.edifyhub.student.OtherStudentsOpenDiscussionActivity
 import com.example.edifyhub.student.StudentCreateDiscussionActivity
 import com.example.edifyhub.student.StudentDashboardActivity
 import com.example.edifyhub.student.StudentProfileUpdateActivity
@@ -110,6 +111,17 @@ class StudentDrawerMenuHandler(
                 drawerLayout.closeDrawers()
                 return true
             }
+            // Add this inside onNavigationItemSelected
+            R.id.nav_other_students_open_discussions -> {
+                Toast.makeText(context, "Other Students' Open Discussions clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, OtherStudentsOpenDiscussionActivity::class.java)
+                intent.putExtra("USER_ID", userId)
+                context.startActivity(intent)
+                (context as? AppCompatActivity)?.finish()
+                drawerLayout.closeDrawers()
+                return true
+            }
+
             R.id.nav_logout -> {
                 Toast.makeText(context, "Logout clicked", Toast.LENGTH_SHORT).show()
                 context.startActivity(Intent(context, LoginActivity::class.java))

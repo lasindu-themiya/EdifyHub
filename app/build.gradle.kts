@@ -69,5 +69,5 @@ dependencies {
     implementation ("com.sun.mail:android-activation:1.6.7")
     implementation ("com.cloudinary:cloudinary-android:2.3.1")
     implementation ("com.github.PayHereDevs:payhere-android-sdk:v3.0.17")
-
+    implementation ("com.google.firebase:firebase-database:20.3.0")
 }
