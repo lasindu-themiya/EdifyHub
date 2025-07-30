@@ -1,13 +1,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:padding="12dp" android:background="@color/surface" android:layout_margin="8dp">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="@color/surface"
+    android:layout_margin="8dp"
+    android:elevation="6dp"
+    android:clipToOutline="true">
 
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/placeholder"/>
+        android:src="@drawable/placeholder"
+        android:background="@color/background"
+        android:layout_marginBottom="8dp"/>
 
     <TextView
         android:id="@+id/tvName"
@@ -15,6 +23,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="16sp"
+        android:textColor="@color/text_primary"
         android:layout_marginTop="8dp"/>
 
     <TextView
@@ -22,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
+        android:textColor="@color/primary"
         android:layout_marginTop="4dp"/>
 
     <TextView
@@ -29,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12sp"
+        android:textColor="@color/text_secondary"
         android:layout_marginTop="4dp"/>
 
     <Button
