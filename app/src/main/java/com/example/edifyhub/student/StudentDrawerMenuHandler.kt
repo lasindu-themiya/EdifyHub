@@ -13,6 +13,7 @@ import com.example.edifyhub.student.StudentProfileUpdateActivity
 import com.example.edifyhub.student.StudentQuizListActivity
 import com.example.edifyhub.student.StudentTeacherListActivity
 import com.example.edifyhub.student.StudentViewAttendedQuizActivity
+import com.example.edifyhub.student.StudentViewOpenDiscussionActivity
 import com.google.android.material.navigation.NavigationView
 
 class StudentDrawerMenuHandler(
@@ -94,6 +95,15 @@ class StudentDrawerMenuHandler(
             R.id.nav_create_discussion -> {
                 Toast.makeText(context, "Create Discussion clicked", Toast.LENGTH_SHORT).show()
                 val intent = Intent(context, StudentCreateDiscussionActivity::class.java)
+                intent.putExtra("USER_ID", userId)
+                context.startActivity(intent)
+                (context as? AppCompatActivity)?.finish()
+                drawerLayout.closeDrawers()
+                return true
+            }
+            R.id.nav_open_discussions -> {
+                Toast.makeText(context, "Open Discussions clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, StudentViewOpenDiscussionActivity::class.java)
                 intent.putExtra("USER_ID", userId)
                 context.startActivity(intent)
                 (context as? AppCompatActivity)?.finish()

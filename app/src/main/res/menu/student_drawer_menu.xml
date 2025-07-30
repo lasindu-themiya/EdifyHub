@@ -26,6 +26,10 @@
         android:title="Create Discussion"
         android:icon="@drawable/ic_discussion" />
     <item
+        android:id="@+id/nav_open_discussions"
+        android:title="Open Discussions"
+        android:icon="@drawable/ic_discussion_open" />
+    <item
         android:id="@+id/nav_logout"
         android:title="Logout"
         android:icon="@drawable/ic_logout" />
