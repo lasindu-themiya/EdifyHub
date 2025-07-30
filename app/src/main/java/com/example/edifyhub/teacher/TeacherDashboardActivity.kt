@@ -1,11 +1,14 @@
 package com.example.edifyhub.teacher
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
+import com.example.edifyhub.student.StudentQuizListActivity
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -48,6 +51,16 @@ class TeacherDashboardActivity : AppCompatActivity() {
 
         // Example placeholders
         findViewById<TextView>(R.id.upComingClassesCount).text = "19"
+
+        //create quizzes navigation
+        val createQuizzes = findViewById<ImageButton>(R.id.createQuizzes)
+        createQuizzes.setOnClickListener {
+            val intent = Intent(this, CreateQuizActivity::class.java)
+            intent.putExtra("USER_ID", userId)
+            startActivity(intent)
+        }
+
+
     }
 
     private fun fetchMonthlyRevenue(userId: String) {
