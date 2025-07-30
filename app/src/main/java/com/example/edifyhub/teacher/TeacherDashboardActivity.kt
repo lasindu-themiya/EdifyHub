@@ -109,37 +109,7 @@ class TeacherDashboardActivity : AppCompatActivity() {
         setupLineChart()
     }
 
-    private fun setupLineChart() {
-        val lineChart = findViewById<LineChart>(R.id.teacherLineChart)
-        val entries = monthlyRevenue.mapIndexed { index, revenue ->
-            Entry(index.toFloat(), revenue.toFloat())
-        }
 
-        val dataSet = LineDataSet(entries, "Revenue (Rs.)").apply {
-            color = getColor(R.color.primary)
-            valueTextColor = getColor(R.color.text_primary)
-            lineWidth = 3f
-            circleRadius = 5f
-            setCircleColor(getColor(R.color.primary))
-            setDrawFilled(true)
-            fillColor = getColor(R.color.primary)
-            mode = LineDataSet.Mode.CUBIC_BEZIER
-        }
-
-        lineChart.apply {
-            data = LineData(dataSet)
-            xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(
-                arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-            )
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.granularity = 1f
-            axisRight.isEnabled = false
-            description.isEnabled = false
-            legend.isEnabled = false
-            animateY(1000)
-            invalidate()
-        }
-    }
 
 
     private fun loadTotalQuizzes(userId: String) {
