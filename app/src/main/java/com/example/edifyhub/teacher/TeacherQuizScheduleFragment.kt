@@ -68,7 +68,8 @@ class TeacherQuizScheduleFragment : Fragment() {
                         amount = doc.getDouble("amount"),
                         createdAt = doc.getTimestamp("createdAt")?.toDate(),
                         scheduledAt = doc.getTimestamp("scheduledAt")?.toDate(),
-                        meetingAt = doc.getTimestamp("meetingAt")?.toDate()
+                        meetingAt = doc.getTimestamp("meetingAt")?.toDate(),
+                        meetingJoinUrl = doc.getString("meetingJoinUrl") ?: "",
                     )
                     val sched = quiz.scheduledAt
                     if (sched != null) {

@@ -12,5 +12,6 @@ data class Quiz(
     val amount: Double?,
     val createdAt: Date?,
     val scheduledAt: Date?,
-    val meetingAt: Date?
+    val meetingAt: Date?,
+    val meetingJoinUrl: String? = null
 )

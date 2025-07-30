@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Date
 
@@ -18,7 +19,9 @@ data class AttendedQuiz(
     val subject: String = "",
     val score: Int = 0,
     val total: Int = 0,
-    val timestamp: com.google.firebase.Timestamp? = null
+    val timestamp: Timestamp? = null,
+    val meetingJoinUrl: String? = null,
+    val meetingAt: Date? = null
 )
 
 class StudentViewAttendedQuizFragment : Fragment() {
@@ -59,7 +62,7 @@ class StudentViewAttendedQuizFragment : Fragment() {
             teacherId = attendedQuiz.teacherId,
             teacherName = attendedQuiz.teacherName,
             scheduledAt = attendedQuiz.timestamp?.toDate() ?: Date(0),
-            meetingAt = attendedQuiz.timestamp?.toDate() ?: Date(0),
+            meetingAt = attendedQuiz.meetingAt ?: Date(0),
             amount = 0.0,
             isPaid = false
         )
@@ -107,6 +110,9 @@ class StudentViewAttendedQuizFragment : Fragment() {
                         .addOnSuccessListener { quizDoc ->
                             val quizName = quizDoc.getString("name") ?: "Unknown Quiz"
                             val subject = quizDoc.getString("subject") ?: "Unknown Subject"
+                            val meetingJoinUrl = quizDoc.getString("meetingJoinUrl")
+                            val meetingAtTimestamp = quizDoc.getTimestamp("meetingAt")
+                            val meetingAtDate = meetingAtTimestamp?.toDate()
                             db.collection("users").document(item.teacherId)
                                 .get()
                                 .addOnSuccessListener { teacherDoc ->
@@ -115,7 +121,9 @@ class StudentViewAttendedQuizFragment : Fragment() {
                                         item.copy(
                                             quizName = quizName,
                                             teacherName = teacherName,
-                                            subject = subject
+                                            subject = subject,
+                                            meetingJoinUrl = meetingJoinUrl,
+                                            meetingAt = meetingAtDate
                                         )
                                     )
                                     fetchedCount++
@@ -129,7 +137,9 @@ class StudentViewAttendedQuizFragment : Fragment() {
                                         item.copy(
                                             quizName = quizName,
                                             teacherName = "Unknown Teacher",
-                                            subject = subject
+                                            subject = subject,
+                                            meetingJoinUrl = meetingJoinUrl,
+                                            meetingAt = meetingAtDate
                                         )
                                     )
                                     fetchedCount++

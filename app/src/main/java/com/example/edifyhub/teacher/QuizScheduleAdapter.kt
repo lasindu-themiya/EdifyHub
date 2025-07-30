@@ -1,11 +1,14 @@
 package com.example.edifyhub.teacher
 
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.view.*
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -63,8 +66,11 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
         private val scheduledAt: TextView = view.findViewById(R.id.quiz_scheduled_at)
         private val meetingAt: TextView = view.findViewById(R.id.quiz_meeting_at)
         private val btnViewAttendees: Button = view.findViewById(R.id.btnViewAttendees)
+        private val btnHostTeamsWeb: Button = view.findViewById(R.id.btnHostTeamsWeb)
+        private val tvMeetingLink: TextView = view.findViewById(R.id.tvMeetingLink)
 
         fun bind(quiz: Quiz, dateFormat: SimpleDateFormat, teacherId: String?) {
+            // 1. Bind quiz data
             name.text = quiz.name
             subject.text = quiz.subject
             numQuestions.text = "Questions: ${quiz.numQuestions}"
@@ -75,12 +81,79 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
             scheduledAt.text = "Scheduled: ${quiz.scheduledAt?.let { dateFormat.format(it) } ?: "N/A"}"
             meetingAt.text = "Meeting: ${quiz.meetingAt?.let { dateFormat.format(it) } ?: "N/A"}"
 
+            // 2. Attendees button
             btnViewAttendees.setOnClickListener {
                 val fragment = QuizAttendeesFragment.newInstance(quiz.id, teacherId ?: "")
                 (itemView.context as AppCompatActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit()
+            }
+
+            // 3. Dynamic button and meeting link logic
+            if (!quiz.meetingJoinUrl.isNullOrEmpty()) {
+                // Show meeting link text and set button as "Join Meeting"
+                tvMeetingLink.visibility = View.VISIBLE
+                tvMeetingLink.text = "Meeting Link: ${quiz.meetingJoinUrl}"
+                tvMeetingLink.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(quiz.meetingJoinUrl))
+                    itemView.context.startActivity(intent)
+                }
+                btnHostTeamsWeb.text = "Join Meeting"
+                btnHostTeamsWeb.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(quiz.meetingJoinUrl))
+                    itemView.context.startActivity(intent)
+                }
+            } else {
+                // Hide meeting link and set button as "Schedule Meeting"
+                tvMeetingLink.visibility = View.GONE
+                btnHostTeamsWeb.text = "Schedule Meeting"
+                btnHostTeamsWeb.setOnClickListener {
+                    // a. Open Teams meeting creator in browser
+                    val subject = Uri.encode(quiz.name ?: "Quiz Meeting")
+                    val url = "https://teams.microsoft.com/l/meeting/new?subject=$subject"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    try { itemView.context.startActivity(intent) }
+                    catch (e: Exception) {
+                        intent.setPackage(null)
+                        itemView.context.startActivity(intent)
+                    }
+
+                    // b. Prompt to paste meeting link after user creates it
+                    val editText = EditText(itemView.context)
+                    editText.hint = "Paste Teams meeting link here"
+                    editText.inputType = android.text.InputType.TYPE_TEXT_VARIATION_URI
+
+                    AlertDialog.Builder(itemView.context)
+                        .setTitle("Paste Meeting Link")
+                        .setMessage("After creating the meeting in Teams, copy the meeting link and paste it below.")
+                        .setView(editText)
+                        .setPositiveButton("Save") { _, _ ->
+                            val link = editText.text.toString().trim()
+                            if (link.isNotEmpty() && teacherId != null) {
+                                // c. Save meeting link to Firestore
+                                val db = FirebaseFirestore.getInstance()
+                                db.collection("users").document(teacherId)
+                                    .collection("quizzes").document(quiz.id)
+                                    .update(mapOf("meetingJoinUrl" to link))
+                                    .addOnSuccessListener {
+                                        Toast.makeText(itemView.context, "Meeting link saved!", Toast.LENGTH_SHORT).show()
+                                        tvMeetingLink.text = "Meeting Link: $link"
+                                        tvMeetingLink.visibility = View.VISIBLE
+                                        btnHostTeamsWeb.text = "Join Meeting"
+                                        btnHostTeamsWeb.setOnClickListener {
+                                            val intent2 = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+                                            itemView.context.startActivity(intent2)
+                                        }
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(itemView.context, "Failed to save: ${e.message}", Toast.LENGTH_LONG).show()
+                                    }
+                            }
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                }
             }
         }
     }

@@ -117,14 +117,57 @@
             android:textSize="12sp"
             android:textColor="@color/text_secondary"
             android:layout_marginTop="2dp"/>
-        <Button
-            android:id="@+id/btnViewAttendees"
-            android:layout_width="wrap_content"
+
+        <!-- Meeting Link Section -->
+        <LinearLayout
+            android:id="@+id/layoutMeetingLinkSection"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View Attendees"
-            android:layout_gravity="end"
-            android:backgroundTint="@color/primary"
-            android:textColor="@color/white"
-            android:layout_marginTop="8dp"/>
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvMeetingLinkLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meeting Link: "
+                android:textStyle="bold"
+                android:textColor="@color/primary" />
+
+            <TextView
+                android:id="@+id/tvMeetingLink"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnViewAttendees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Attendees"
+                android:backgroundTint="@color/primary"
+                android:textColor="@color/white"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnHostTeamsWeb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Schedule Meeting"
+                android:backgroundTint="@color/secondary"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
