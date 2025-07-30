@@ -13,6 +13,7 @@ import com.example.edifyhub.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.text.get
 
 class ManageInstituteActivity : AppCompatActivity() {
 
@@ -71,8 +72,24 @@ class ManageInstituteActivity : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { doc ->
                     if (doc.exists()) {
-                        val instituteName = doc.getString("institute") ?: ""
-                        etName.setText(instituteName)
+                        val instituteDetails = doc.get("instituteDetails") as? Map<*, *>
+                        if (instituteDetails != null) {
+                            etName.setText(instituteDetails["name"] as? String ?: "")
+                            etAddress.setText(instituteDetails["address"] as? String ?: "")
+                            etDescription.setText(instituteDetails["description"] as? String ?: "")
+                            etContact.setText(instituteDetails["contact"] as? String ?: "")
+                            val location = instituteDetails["location"] as? Map<*, *>
+                            if (location != null) {
+                                selectedLat = location["latitude"] as? Double
+                                selectedLng = location["longitude"] as? Double
+                                selectedAddress = location["address"] as? String
+                                tvSelectedLocation.text = selectedAddress ?: "Location selected"
+                            }
+                        } else {
+                            // Fallback: pre-fill only institute name if details are missing
+                            val instituteName = doc.getString("institute") ?: ""
+                            etName.setText(instituteName)
+                        }
                     }
                 }
                 .addOnFailureListener { e ->
