@@ -1,6 +1,6 @@
 package com.example.edifyhub.student
 
-import com.example.edifyhub.student.QuizItem
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -14,11 +14,13 @@ class AttendQuizFragment : Fragment() {
     private val questions = mutableListOf<Question>()
     private val selectedAnswers = mutableMapOf<String, Int>() // questionId -> selectedIndex
     private var userId: String? = null
+    private lateinit var questionDbHelper: QuizQuestionDbHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizItem = requireArguments().getParcelable<QuizItem>("QUIZ_ITEM")!!
         userId = activity?.intent?.getStringExtra("USER_ID")
+        questionDbHelper = QuizQuestionDbHelper(requireContext())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -28,39 +30,66 @@ class AttendQuizFragment : Fragment() {
         val progressBar = root.findViewById<ProgressBar>(R.id.progressBar)
 
         progressBar.visibility = View.VISIBLE
-        fetchQuestions { questionList ->
+
+        if (isNetworkAvailable(requireContext())) {
+            fetchQuestions { questionList ->
+                progressBar.visibility = View.GONE
+                questions.clear()
+                questions.addAll(questionList)
+                // Save questions locally for offline
+                questionDbHelper.saveQuestions(quizItem.id, questions)
+                populateQuestionsUI(inflater, questionsLayout)
+            }
+        } else {
+            // Offline: load from SQLite
+            val offlineQuestions = questionDbHelper.getQuestions(quizItem.id)
             progressBar.visibility = View.GONE
             questions.clear()
-            questions.addAll(questionList)
-            questionsLayout.removeAllViews()
-            for (question in questions) {
-                val qView = inflater.inflate(R.layout.item_quiz_question, questionsLayout, false)
-                val tvQuestion = qView.findViewById<TextView>(R.id.tvQuestion)
-                val radioGroup = qView.findViewById<RadioGroup>(R.id.radioGroupAnswers)
-                tvQuestion.text = question.text
-                radioGroup.removeAllViews()
-                for ((i, answer) in question.answers.withIndex()) {
-                    val rb = RadioButton(requireContext())
-                    rb.text = answer
-                    rb.id = i
-                    rb.setTextColor(resources.getColor(R.color.text_primary, null))
-                    radioGroup.addView(rb)
-                }
-                radioGroup.setOnCheckedChangeListener { _, checkedId ->
-                    selectedAnswers[question.id] = checkedId
-                }
-                questionsLayout.addView(qView)
-            }
+            questions.addAll(offlineQuestions)
+            populateQuestionsUI(inflater, questionsLayout)
         }
 
         btnSubmit.setOnClickListener {
             val score = calculateScore()
-            saveQuizAttempt(score) { success ->
+            // Only save attempt if online
+            if (isNetworkAvailable(requireContext())) {
+                saveQuizAttempt(score) { success ->
+                    showResultDialog(score, questions.size)
+                }
+            } else {
                 showResultDialog(score, questions.size)
             }
         }
 
         return root
+    }
+
+    private fun populateQuestionsUI(inflater: LayoutInflater, questionsLayout: LinearLayout) {
+        questionsLayout.removeAllViews()
+        for (question in questions) {
+            val qView = inflater.inflate(R.layout.item_quiz_question, questionsLayout, false)
+            val tvQuestion = qView.findViewById<TextView>(R.id.tvQuestion)
+            val radioGroup = qView.findViewById<RadioGroup>(R.id.radioGroupAnswers)
+            val tvCorrectAnswer = qView.findViewById<TextView?>(R.id.tvCorrectAnswer) // optional: add this TextView in your layout if you want to show correct answer
+            tvQuestion.text = question.text
+            radioGroup.removeAllViews()
+            for ((i, answer) in question.answers.withIndex()) {
+                val rb = RadioButton(requireContext())
+                rb.text = answer
+                rb.id = i
+                rb.setTextColor(resources.getColor(R.color.text_primary, null))
+                radioGroup.addView(rb)
+            }
+            radioGroup.setOnCheckedChangeListener { _, checkedId ->
+                selectedAnswers[question.id] = checkedId
+            }
+            // Optionally show correct answer if submitting in offline mode
+            if (!isNetworkAvailable(requireContext())) {
+                tvCorrectAnswer?.visibility = View.VISIBLE
+                tvCorrectAnswer?.text = "Correct: ${question.answers.getOrNull(question.correctIndex) ?: ""}"
+            }
+            questionsLayout.addView(qView)
+        }
     }
 
     private fun fetchQuestions(onResult: (List<Question>) -> Unit) {
@@ -94,12 +123,12 @@ class AttendQuizFragment : Fragment() {
         return score
     }
 
-    // Save attempt under both teacher and student
+
     private fun saveQuizAttempt(score: Int, onComplete: (Boolean) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val studentId = userId ?: UUID.randomUUID().toString()
 
-        // Fetch student username and teacher name
+
         db.collection("users").document(studentId).get().addOnSuccessListener { studentDoc ->
             val studentUsername = studentDoc.getString("username") ?: "Unknown"
             db.collection("users").document(quizItem.teacherId).get().addOnSuccessListener { teacherDoc ->
@@ -117,13 +146,11 @@ class AttendQuizFragment : Fragment() {
                     "timestamp" to Date()
                 )
 
-                // Save under teacher's quiz attempts
                 db.collection("users").document(quizItem.teacherId)
                     .collection("quizzes").document(quizItem.id)
                     .collection("attempts").document(studentId)
                     .set(attemptData)
 
-                // Save under student's attemptedQuizzes
                 db.collection("users").document(studentId)
                     .collection("attemptedQuizzes").document(quizItem.id)
                     .set(attemptData)
@@ -131,6 +158,13 @@ class AttendQuizFragment : Fragment() {
                     .addOnFailureListener { onComplete(false) }
             }
         }
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     private fun showResultDialog(score: Int, total: Int) {

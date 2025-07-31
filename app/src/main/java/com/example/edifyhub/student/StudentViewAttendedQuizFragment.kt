@@ -1,5 +1,8 @@
 package com.example.edifyhub.student
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.*
 import android.widget.ProgressBar
@@ -29,15 +32,18 @@ class StudentViewAttendedQuizFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private val adapter by lazy {
-        AttendedQuizAdapter { attendedQuiz ->
-            navigateToViewQuiz(attendedQuiz)
-        }
+        AttendedQuizAdapter(
+            onViewQuiz = { attendedQuiz -> navigateToViewQuiz(attendedQuiz) },
+            isDeviceOnline = { isNetworkAvailable(requireContext()) }
+        )
     }
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var attendedQuizDbHelper: AttendedQuizDbHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userId = arguments?.getString("USER_ID")
+        attendedQuizDbHelper = AttendedQuizDbHelper(requireContext())
     }
 
     override fun onCreateView(
@@ -50,8 +56,19 @@ class StudentViewAttendedQuizFragment : Fragment() {
         recyclerView.adapter = adapter
 
         progressBar.visibility = View.VISIBLE
-        fetchAttendedQuizzes()
+        if (isNetworkAvailable(requireContext())) {
+            fetchAttendedQuizzesOnline()
+        } else {
+            fetchAttendedQuizzesOffline()
+        }
         return root
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     private fun navigateToViewQuiz(attendedQuiz: AttendedQuiz) {
@@ -73,7 +90,7 @@ class StudentViewAttendedQuizFragment : Fragment() {
             .commit()
     }
 
-    private fun fetchAttendedQuizzes() {
+    private fun fetchAttendedQuizzesOnline() {
         val uid = userId ?: return
         db.collection("users").document(uid)
             .collection("attemptedQuizzes")
@@ -101,6 +118,8 @@ class StudentViewAttendedQuizFragment : Fragment() {
                         if (fetchedCount == attendedList.size) {
                             adapter.submitList(resultList)
                             progressBar.visibility = View.GONE
+                            // Save to sqlite
+                            attendedQuizDbHelper.saveAttendedQuizzes(uid, resultList)
                         }
                         continue
                     }
@@ -130,6 +149,8 @@ class StudentViewAttendedQuizFragment : Fragment() {
                                     if (fetchedCount == attendedList.size) {
                                         adapter.submitList(resultList)
                                         progressBar.visibility = View.GONE
+                                        // Save to sqlite
+                                        attendedQuizDbHelper.saveAttendedQuizzes(uid, resultList)
                                     }
                                 }
                                 .addOnFailureListener {
@@ -146,6 +167,8 @@ class StudentViewAttendedQuizFragment : Fragment() {
                                     if (fetchedCount == attendedList.size) {
                                         adapter.submitList(resultList)
                                         progressBar.visibility = View.GONE
+                                        // Save to sqlite
+                                        attendedQuizDbHelper.saveAttendedQuizzes(uid, resultList)
                                     }
                                 }
                         }
@@ -155,6 +178,7 @@ class StudentViewAttendedQuizFragment : Fragment() {
                             if (fetchedCount == attendedList.size) {
                                 adapter.submitList(resultList)
                                 progressBar.visibility = View.GONE
+                                attendedQuizDbHelper.saveAttendedQuizzes(uid, resultList)
                             }
                         }
                 }
@@ -163,5 +187,12 @@ class StudentViewAttendedQuizFragment : Fragment() {
                 adapter.submitList(emptyList())
                 progressBar.visibility = View.GONE
             }
+    }
+
+    private fun fetchAttendedQuizzesOffline() {
+        val uid = userId ?: return
+        val quizzes = attendedQuizDbHelper.getAttendedQuizzes(uid)
+        adapter.submitList(quizzes)
+        progressBar.visibility = View.GONE
     }
 }
