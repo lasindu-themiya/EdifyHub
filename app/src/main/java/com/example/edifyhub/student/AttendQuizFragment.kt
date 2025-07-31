@@ -70,7 +70,6 @@ class AttendQuizFragment : Fragment() {
             val qView = inflater.inflate(R.layout.item_quiz_question, questionsLayout, false)
             val tvQuestion = qView.findViewById<TextView>(R.id.tvQuestion)
             val radioGroup = qView.findViewById<RadioGroup>(R.id.radioGroupAnswers)
-            val tvCorrectAnswer = qView.findViewById<TextView?>(R.id.tvCorrectAnswer) // optional: add this TextView in your layout if you want to show correct answer
             tvQuestion.text = question.text
             radioGroup.removeAllViews()
             for ((i, answer) in question.answers.withIndex()) {
@@ -82,11 +81,6 @@ class AttendQuizFragment : Fragment() {
             }
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 selectedAnswers[question.id] = checkedId
-            }
-            // Optionally show correct answer if submitting in offline mode
-            if (!isNetworkAvailable(requireContext())) {
-                tvCorrectAnswer?.visibility = View.VISIBLE
-                tvCorrectAnswer?.text = "Correct: ${question.answers.getOrNull(question.correctIndex) ?: ""}"
             }
             questionsLayout.addView(qView)
         }
