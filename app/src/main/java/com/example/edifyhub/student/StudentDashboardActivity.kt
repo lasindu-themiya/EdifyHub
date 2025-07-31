@@ -39,11 +39,6 @@ class StudentDashboardActivity : AppCompatActivity() {
         drawerHandler = StudentDrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
 
-        val postedDiscussions = 30
-
-        findViewById<TextView>(R.id.postedDiscussions).text = postedDiscussions.toString()
-
-
         if(userId != null){
             db.collection("users").document(userId!!).get()
             .addOnSuccessListener { document ->
@@ -62,11 +57,16 @@ class StudentDashboardActivity : AppCompatActivity() {
         // get completed quizzes & success rate
         if (userId != null) {
             userId?.let { safeUserId ->
-                db.collection("users")
+                val attemptedQuizzesRef = db.collection("users")
                 .document(safeUserId)
                 .collection("attemptedQuizzes")
-                .get()
-                .addOnSuccessListener { documents ->
+
+                val discussionRef = db.collection("users")
+                    .document(safeUserId)
+                    .collection("discussions")
+
+                attemptedQuizzesRef.get()
+                    .addOnSuccessListener { documents ->
                     val totalDocs = documents.size()
                     var sumOfAverages = 0.0
 
@@ -95,16 +95,36 @@ class StudentDashboardActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.completedQuizzes).text = "0"
                     findViewById<TextView>(R.id.rate).text = "0.00%"
                 }
+
+
+                discussionRef.get()
+                    .addOnSuccessListener { discussionDocs ->
+                        val totalDiscussions = discussionDocs.size()
+                        findViewById<TextView>(R.id.postedDiscussions).text = "$totalDiscussions"
+                    }
+                    .addOnFailureListener {
+                        findViewById<TextView>(R.id.postedDiscussions).text = "0"
+                    }
+
             }
         }
 
 
-
+        //search quizzes navigation
         val searchQuizzes = findViewById<ImageButton>(R.id.searchQuizzes)
         searchQuizzes.setOnClickListener {
             val intent = Intent(this, StudentQuizListActivity::class.java)
             intent.putExtra("USER_ID", userId)
             startActivity(intent)
         }
+
+        //create discussion navigation
+        val createDiscussion = findViewById<ImageButton>(R.id.searchDiscussions)
+        createDiscussion.setOnClickListener{
+            val intent = Intent(this, StudentCreateDiscussionActivity::class.java)
+            intent.putExtra("USER_ID", userId)
+            startActivity(intent)
+        }
+
     }
 }
