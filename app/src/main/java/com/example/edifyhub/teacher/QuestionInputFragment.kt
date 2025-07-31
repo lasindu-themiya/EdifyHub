@@ -27,6 +27,8 @@ class QuestionInputFragment : Fragment() {
     private var amount: Double? = null
     private var userId: String? = null
     private var scheduledDate: Date? = null
+    private var meetingHour: Int? = null
+    private var meetingMinute: Int? = null
 
     companion object {
         fun newInstance(
@@ -37,7 +39,9 @@ class QuestionInputFragment : Fragment() {
             paid: Boolean,
             amount: Double?,
             userId: String?,
-            scheduledDate: Date?
+            scheduledDate: Date?,
+            meetingHour: Int?,
+            meetingMinute: Int?
         ) = QuestionInputFragment().apply {
             arguments = Bundle().apply {
                 putString("name", name)
@@ -48,6 +52,8 @@ class QuestionInputFragment : Fragment() {
                 putDouble("amount", amount ?: 0.0)
                 putString("userId", userId)
                 putLong("scheduledDate", scheduledDate?.time ?: 0L)
+                putInt("meetingHour", meetingHour ?: -1)
+                putInt("meetingMinute", meetingMinute ?: -1)
             }
         }
     }
@@ -64,14 +70,16 @@ class QuestionInputFragment : Fragment() {
             userId = it.getString("userId")
             val schedMillis = it.getLong("scheduledDate", 0L)
             scheduledDate = if (schedMillis > 0) Date(schedMillis) else null
+            meetingHour = it.getInt("meetingHour", -1).takeIf { h -> h != -1 }
+            meetingMinute = it.getInt("meetingMinute", -1).takeIf { m -> m != -1 }
         }
     }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root = inflater.inflate(R.layout.fragment_question_input, container, false)
         val questionContainer = root.findViewById<LinearLayout>(R.id.question_container)
 
-        // Section: Quiz meta fields
         val metaSection = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(24.dpToPx())
@@ -244,9 +252,17 @@ class QuestionInputFragment : Fragment() {
             Toast.makeText(requireContext(), "Scheduled date missing", Toast.LENGTH_SHORT).show()
             return
         }
+        if (meetingHour == null || meetingMinute == null) {
+            Toast.makeText(requireContext(), "Meeting time missing", Toast.LENGTH_SHORT).show()
+            return
+        }
         val meetingDate = Calendar.getInstance().apply {
             time = scheduledDate!!
             add(Calendar.DAY_OF_YEAR, 7)
+            set(Calendar.HOUR_OF_DAY, meetingHour!!)
+            set(Calendar.MINUTE, meetingMinute!!)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }.time
 
         val db = FirebaseFirestore.getInstance()
@@ -259,7 +275,7 @@ class QuestionInputFragment : Fragment() {
             "amount" to (amount ?: 0.0),
             "createdAt" to Date(),
             "scheduledAt" to scheduledDate,
-            "meetingAt" to meetingDate
+            "meetingAt" to meetingDate // <-- Now has correct time
         )
         db.collection("users").document(userId!!)
             .collection("quizzes")
@@ -278,7 +294,7 @@ class QuestionInputFragment : Fragment() {
                 }
                 Toast.makeText(requireContext(), "Quiz created successfully!", Toast.LENGTH_SHORT).show()
                 val intent = Intent(requireContext(), TeacherDashboardActivity::class.java)
-                intent.putExtra("USER_ID", userId) // Pass userId to dashboard
+                intent.putExtra("USER_ID", userId)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 requireActivity().finish()

@@ -43,16 +43,19 @@ class CreateQuizActivity : AppCompatActivity() {
         subject: String,
         numQuestions: Int,
         numAnswers: Int,
-        paid: Boolean,
+        isPaid: Boolean,
         amount: Double?,
-        scheduledDate: Date?
+        scheduledDate: Date?,
+        meetingHour: Int?,
+        meetingMinute: Int?
     ) {
         val fragment = QuestionInputFragment.newInstance(
-            name, subject, numQuestions, numAnswers, paid, amount, userId, scheduledDate
+            name, subject, numQuestions, numAnswers, isPaid,
+            amount, getUserId, scheduledDate, meetingHour, meetingMinute
         )
-        supportFragmentManager.commit {
-            replace(R.id.fragment_container, fragment)
-            addToBackStack(null)
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

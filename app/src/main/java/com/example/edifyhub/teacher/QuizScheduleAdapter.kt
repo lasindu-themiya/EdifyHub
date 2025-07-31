@@ -11,6 +11,9 @@ import com.example.edifyhub.R
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
+import com.example.edifyhub.email.EmailSender
 
 class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = mutableListOf<QuizScheduleItem>()
@@ -90,9 +93,7 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
                     .commit()
             }
 
-            // 3. Dynamic button and meeting link logic
             if (!quiz.meetingJoinUrl.isNullOrEmpty()) {
-                // Show meeting link text and set button as "Join Meeting"
                 tvMeetingLink.visibility = View.VISIBLE
                 tvMeetingLink.text = "Meeting Link: ${quiz.meetingJoinUrl}"
                 tvMeetingLink.setOnClickListener {
@@ -103,15 +104,22 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
                 btnHostTeamsWeb.setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(quiz.meetingJoinUrl))
                     itemView.context.startActivity(intent)
+
+                    notifyStudentsMeetingStarted(teacherId, quiz.id, quiz.meetingJoinUrl, quiz.name)
                 }
             } else {
-                // Hide meeting link and set button as "Schedule Meeting"
                 tvMeetingLink.visibility = View.GONE
                 btnHostTeamsWeb.text = "Schedule Meeting"
                 btnHostTeamsWeb.setOnClickListener {
-                    // a. Open Teams meeting creator in browser
+
                     val subject = Uri.encode(quiz.name ?: "Quiz Meeting")
-                    val url = "https://teams.microsoft.com/l/meeting/new?subject=$subject"
+                    val startTimeParam = quiz.meetingAt?.let {
+                        val utcFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+                        utcFormat.timeZone = TimeZone.getTimeZone("UTC")
+                        "&startTime=" + Uri.encode(utcFormat.format(it))
+                    } ?: ""
+
+                    val url = "https://teams.microsoft.com/l/meeting/new?subject=$subject$startTimeParam"
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     try { itemView.context.startActivity(intent) }
                     catch (e: Exception) {
@@ -119,7 +127,6 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
                         itemView.context.startActivity(intent)
                     }
 
-                    // b. Prompt to paste meeting link after user creates it
                     val editText = EditText(itemView.context)
                     editText.hint = "Paste Teams meeting link here"
                     editText.inputType = android.text.InputType.TYPE_TEXT_VARIATION_URI
@@ -131,7 +138,6 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
                         .setPositiveButton("Save") { _, _ ->
                             val link = editText.text.toString().trim()
                             if (link.isNotEmpty() && teacherId != null) {
-                                // c. Save meeting link to Firestore
                                 val db = FirebaseFirestore.getInstance()
                                 db.collection("users").document(teacherId)
                                     .collection("quizzes").document(quiz.id)
@@ -144,6 +150,8 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
                                         btnHostTeamsWeb.setOnClickListener {
                                             val intent2 = Intent(Intent.ACTION_VIEW, Uri.parse(link))
                                             itemView.context.startActivity(intent2)
+
+                                            notifyStudentsMeetingStarted(teacherId, quiz.id, link, quiz.name)
                                         }
                                     }
                                     .addOnFailureListener { e ->
@@ -153,6 +161,48 @@ class QuizScheduleAdapter(private val teacherId: String?) : RecyclerView.Adapter
                         }
                         .setNegativeButton("Cancel", null)
                         .show()
+                }
+            }
+        }
+
+        private fun notifyStudentsMeetingStarted(
+            teacherId: String?,
+            quizId: String,
+            meetingUrl: String?,
+            quizName: String?
+        ) {
+            if (teacherId == null || meetingUrl.isNullOrEmpty()) return
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val db = FirebaseFirestore.getInstance()
+                try {
+                    // 1. Get attempts (student IDs)
+                    val attemptsSnapshot = db.collection("users")
+                        .document(teacherId)
+                        .collection("quizzes")
+                        .document(quizId)
+                        .collection("attempts")
+                        .get()
+                        .await()
+
+                    val studentIds = attemptsSnapshot.documents
+                        .mapNotNull { it.getString("userId") }
+
+                    val emails = mutableListOf<String>()
+                    for (studentId in studentIds) {
+                        val userSnap = db.collection("users").document(studentId).get().await()
+                        if (userSnap.exists() && userSnap.getString("userRole") == "student") {
+                            userSnap.getString("email")?.let { emails.add(it) }
+                        }
+                    }
+
+                    val subject = "Quiz Meeting Started: ${quizName ?: "Quiz"}"
+                    val body = "Dear Student,\n\nThe meeting for quiz \"${quizName ?: "Quiz"}\" has started. Join within the next 5 minutes ASAP!\n\nBest regards,\nEdifyHub"
+                    for (email in emails) {
+                        EmailSender.sendEmail(email, subject, body)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }

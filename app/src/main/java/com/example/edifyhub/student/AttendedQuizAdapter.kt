@@ -53,7 +53,6 @@ class AttendedQuizAdapter(
             tvScore.text = "Score: ${quiz.score}/${quiz.total}"
             tvDate.text = quiz.timestamp?.toDate()?.let { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it) } ?: "Date: N/A"
 
-            // Meeting At
             if (quiz.meetingAt != null) {
                 tvMeetingAt.visibility = View.VISIBLE
                 tvMeetingAt.text = "Meeting At: ${dateFormat.format(quiz.meetingAt)}"
@@ -61,16 +60,44 @@ class AttendedQuizAdapter(
                 tvMeetingAt.visibility = View.GONE
             }
 
-            // Always hide the meeting link, even if present
             tvMeetingLink.visibility = View.GONE
 
-            // Join Meeting button
             if (!quiz.meetingJoinUrl.isNullOrEmpty()) {
                 btnJoinMeeting.visibility = View.VISIBLE
-                btnJoinMeeting.isEnabled = true
-                btnJoinMeeting.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(quiz.meetingJoinUrl))
-                    it.context.startActivity(intent)
+
+                val now = System.currentTimeMillis()
+                val meetingTime = quiz.meetingAt?.time ?: 0L
+                val oneHourMillis = 60 * 60 * 1000L
+
+                when {
+                    now < meetingTime -> {
+                        btnJoinMeeting.setBackgroundColor(
+                            btnJoinMeeting.context.getColor(android.R.color.holo_red_dark)
+                        )
+                        btnJoinMeeting.text = "Join Meeting"
+                        btnJoinMeeting.setOnClickListener {
+                            Toast.makeText(it.context, "Meeting not started yet!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    now in meetingTime until (meetingTime + oneHourMillis) -> {
+                        btnJoinMeeting.setBackgroundColor(
+                            btnJoinMeeting.context.getColor(R.color.primary)
+                        )
+                        btnJoinMeeting.text = "Join Meeting"
+                        btnJoinMeeting.setOnClickListener {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(quiz.meetingJoinUrl))
+                            it.context.startActivity(intent)
+                        }
+                    }
+                    now >= meetingTime + oneHourMillis -> {
+                        btnJoinMeeting.setBackgroundColor(
+                            btnJoinMeeting.context.getColor(android.R.color.holo_red_dark)
+                        )
+                        btnJoinMeeting.text = "Meeting Finished"
+                        btnJoinMeeting.setOnClickListener {
+                            Toast.makeText(it.context, "The meeting has already finished.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             } else {
                 btnJoinMeeting.visibility = View.GONE
