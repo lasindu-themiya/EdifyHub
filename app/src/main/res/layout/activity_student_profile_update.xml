@@ -78,8 +78,18 @@
                         android:src="@drawable/ic_edit"
                         android:background="@drawable/edit_icon_bg"
                         android:contentDescription="Edit Profile Picture" />
+
+                    <ProgressBar
+                        android:id="@+id/profileImageProgressBar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        style="?android:attr/progressBarStyleLarge"/>
                 </FrameLayout>
 
+                <!-- Rest of your fields remain unchanged -->
+                <!-- ... -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -183,8 +193,6 @@
         android:layout_gravity="start"
         android:background="@color/surface"
         android:fitsSystemWindows="true"
-        app:itemTextColor="@color/text_primary"
-        app:itemIconTint="@color/text_primary"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/student_drawer_menu" />
 </androidx.drawerlayout.widget.DrawerLayout>

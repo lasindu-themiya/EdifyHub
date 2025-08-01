@@ -73,6 +73,14 @@
                         android:src="@drawable/ic_edit"
                         android:background="@drawable/edit_icon_bg"
                         android:contentDescription="Edit Profile Picture" />
+
+                    <ProgressBar
+                        android:id="@+id/profileImageProgressBar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        style="?android:attr/progressBarStyleLarge"/>
                 </FrameLayout>
 
                 <androidx.cardview.widget.CardView

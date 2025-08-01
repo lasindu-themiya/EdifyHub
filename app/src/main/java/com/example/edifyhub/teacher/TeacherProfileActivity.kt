@@ -21,6 +21,7 @@ class TeacherProfileActivity : AppCompatActivity() {
 
     private lateinit var imageProfile: ImageView
     private lateinit var btnEditProfilePic: ImageView
+    private lateinit var profileImageProgressBar: ProgressBar
     private lateinit var etName: EditText
     private lateinit var etAbout: EditText
     private lateinit var etInstitute: EditText
@@ -59,6 +60,7 @@ class TeacherProfileActivity : AppCompatActivity() {
 
         imageProfile = findViewById(R.id.imageProfile)
         btnEditProfilePic = findViewById(R.id.btnEditProfilePic)
+        profileImageProgressBar = findViewById(R.id.profileImageProgressBar)
         etName = findViewById(R.id.etName)
         etAbout = findViewById(R.id.etAbout)
         etInstitute = findViewById(R.id.etInstitute)
@@ -194,11 +196,15 @@ class TeacherProfileActivity : AppCompatActivity() {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.data
             selectedImageUri?.let { uri ->
+                profileImageProgressBar.visibility = View.VISIBLE
                 MediaManager.get().upload(uri)
                     .callback(object : UploadCallback {
-                        override fun onStart(requestId: String?) {}
+                        override fun onStart(requestId: String?) {
+                            profileImageProgressBar.visibility = View.VISIBLE
+                        }
                         override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
                         override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
+                            profileImageProgressBar.visibility = View.GONE
                             val url = resultData["secure_url"] as? String
                             url?.let {
                                 userId?.let { uid ->
@@ -217,9 +223,12 @@ class TeacherProfileActivity : AppCompatActivity() {
                             }
                         }
                         override fun onError(requestId: String?, error: ErrorInfo?) {
+                            profileImageProgressBar.visibility = View.GONE
                             Toast.makeText(this@TeacherProfileActivity, "Upload failed: ${error?.description}", Toast.LENGTH_SHORT).show()
                         }
-                        override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+                        override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                            profileImageProgressBar.visibility = View.GONE
+                        }
                     }).dispatch()
             }
         }
