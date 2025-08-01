@@ -3,14 +3,19 @@ package com.example.edifyhub.teacher
 import android.content.Context
 import android.content.Intent
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.edifyhub.R
 import com.example.edifyhub.login.LoginActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class TeacherDrawerMenuHandler(
     private val context: Context,
@@ -42,7 +47,7 @@ class TeacherDrawerMenuHandler(
             params.topMargin = topMarginInPx
             toggleView.layoutParams = params
         }
-
+        populateNavHeader(userId)
         navigationView.setNavigationItemSelectedListener(this)
     }
 
@@ -75,6 +80,33 @@ class TeacherDrawerMenuHandler(
             true
         } else {
             false
+        }
+    }
+    fun populateNavHeader(userId: String?) {
+        val headerView = navigationView.getHeaderView(0)
+        val navUserName = headerView.findViewById<TextView>(R.id.navUserName)
+        val navUserEmail = headerView.findViewById<TextView>(R.id.navUserEmail)
+        val navUserImage = headerView.findViewById<ImageView>(R.id.imageProfile)
+
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener { userDoc ->
+                    navUserName.text = userDoc.getString("username") ?: ""
+                    navUserEmail.text = userDoc.getString("email") ?: ""
+                    val profileImageUrl = userDoc.getString("profileImageUrl")
+                    if (!profileImageUrl.isNullOrEmpty()) {
+                        Glide.with(context)
+                            .load(profileImageUrl)
+                            .apply(RequestOptions.circleCropTransform())
+                            .placeholder(R.drawable.baseline_person_24)
+                            .error(R.drawable.baseline_person_24)
+                            .into(navUserImage)
+                    } else {
+                        navUserImage.setImageResource(R.drawable.baseline_person_24)
+                    }
+                }
         }
     }
 }
