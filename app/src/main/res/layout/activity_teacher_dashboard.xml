@@ -41,15 +41,46 @@
                 android:gravity="center_horizontal">
 
                 <!-- Dashboard Title -->
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Teacher Dashboard"
-                    android:textSize="32sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary"
-                    android:layout_marginBottom="30dp" />
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp">
+
+                    <ImageView
+                        android:id="@+id/girlImage"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/studentgirl" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="25dp"
+                            android:text="Hello, Teacher"
+                            android:textSize="25dp"
+                            android:textColor="@color/text_primary"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="25dp"
+                            android:text="Welcome back!"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"/>
+                    </LinearLayout>
+                </LinearLayout>
+
 
                 <!-- Row 1 -->
                 <LinearLayout
@@ -109,7 +140,7 @@
                             android:gravity="center">
 
                             <TextView
-                                android:id="@+id/upComingClassesCount"
+                                android:id="@+id/upComingMeetingsCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
@@ -120,7 +151,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Upcoming Classes"
+                                android:text="Upcoming Meetings"
                                 android:textSize="16sp"
                                 android:textColor="@color/surface" />
                         </LinearLayout>
@@ -176,6 +207,7 @@
                     android:layout_marginBottom="20dp">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/createQuizzesCard"
                         android:layout_width="0dp"
                         android:layout_height="120dp"
                         android:layout_weight="2"

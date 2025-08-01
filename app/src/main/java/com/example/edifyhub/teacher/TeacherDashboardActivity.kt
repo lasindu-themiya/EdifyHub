@@ -6,6 +6,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.example.edifyhub.student.StudentQuizListActivity
@@ -45,23 +46,44 @@ class TeacherDashboardActivity : AppCompatActivity() {
         if (userId != null) {
             fetchMonthlyRevenue(userId!!)
             loadTotalQuizzes(userId!!)
+            fetchUpcomingMeetings(userId!!)
         }
 
         setupLineChart()
 
-        // Example placeholders
-        findViewById<TextView>(R.id.upComingClassesCount).text = "19"
-
         //create quizzes navigation
-        val createQuizzes = findViewById<ImageButton>(R.id.createQuizzes)
-        createQuizzes.setOnClickListener {
+        val createQuizzesCard = findViewById<CardView>(R.id.createQuizzesCard)
+        createQuizzesCard.setOnClickListener {
             val intent = Intent(this, CreateQuizActivity::class.java)
             intent.putExtra("USER_ID", userId)
             startActivity(intent)
         }
 
-
     }
+
+    private fun fetchUpcomingMeetings(userId: String){
+        db.collection("users")
+            .document(userId)
+            .collection("quizzes")
+            .get()
+            .addOnSuccessListener { documents ->
+                var upcomingCount = 0
+
+                val now = System.currentTimeMillis()
+
+                for (doc in documents) {
+                    val meetingAt = doc.getTimestamp("meetingAt")?.toDate()?.time
+                    if (meetingAt != null && meetingAt > now) {
+                        upcomingCount++
+                    }
+                }
+                findViewById<TextView>(R.id.upComingMeetingsCount).text = "$upcomingCount"
+            }
+            .addOnFailureListener {
+                findViewById<TextView>(R.id.upComingMeetingsCount).text = "0"
+            }
+    }
+
 
     private fun fetchMonthlyRevenue(userId: String) {
         db.collection("users")
