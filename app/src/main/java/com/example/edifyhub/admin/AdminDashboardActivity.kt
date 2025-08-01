@@ -1,9 +1,11 @@
 package com.example.edifyhub.admin
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.github.mikephil.charting.charts.LineChart
@@ -11,16 +13,24 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class AdminDashboardActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var drawerHandler: DrawerMenuHandler
     private lateinit var toolbar: Toolbar
+    private lateinit var lineChart: LineChart
 
     private val db = FirebaseFirestore.getInstance()
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +41,29 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
+        lineChart = findViewById(R.id.lineChart)
         drawerHandler = DrawerMenuHandler(this, drawerLayout, navigationView, toolbar)
 
-        findViewById<TextView>(R.id.tvMonthlyRevenue).text = "Rs. 250000"
-
+        // Fetch the new dynamic data instead of setting static text
+        fetchPendingApprovalsCount()
         fetchUserCounts()
-        setupLineChart()
+        setupTeacherStreamChart()
+    }
+
+    private fun fetchPendingApprovalsCount() {
+        val tvPendingApprovals = findViewById<TextView>(R.id.tvPendingApprovalsCount) // Use the new ID
+
+        db.collection("users")
+            .whereEqualTo("userRole", "teacher")
+            .whereEqualTo("status", "pending") // Assuming "pending" is the status for new teachers
+            .get()
+            .addOnSuccessListener { result ->
+                tvPendingApprovals.text = result.size().toString()
+            }
+            .addOnFailureListener { e ->
+                Log.w("AdminDashboard", "Error getting pending approvals count.", e)
+                tvPendingApprovals.text = "0"
+            }
     }
 
     private fun fetchUserCounts() {
@@ -58,43 +85,89 @@ class AdminDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun setupLineChart() {
-        val lineChart = findViewById<LineChart>(R.id.lineChart)
-        val entries = listOf(
-            Entry(0f, 20000f),
-            Entry(1f, 30000f),
-            Entry(2f, 25000f),
-            Entry(3f, 40000f),
-            Entry(4f, 35000f),
-            Entry(5f, 50000f),
-            Entry(6f, 45000f),
-            Entry(7f, 60000f),
-            Entry(8f, 55000f),
-            Entry(9f, 70000f),
-            Entry(10f, 65000f),
-            Entry(11f, 80000f)
-        )
-        val dataSet = LineDataSet(entries, "Revenue (Rs.)")
-        dataSet.color = getColor(R.color.primary)
-        dataSet.valueTextColor = getColor(R.color.text_primary)
-        dataSet.lineWidth = 3f
+    private fun setupTeacherStreamChart() {
+        scope.launch {
+            try {
+                val streamDocs = db.collection("streams").get().await()
+                val allStreams = streamDocs.documents.map { it.id }.sorted()
+
+                if (allStreams.isEmpty()) {
+                    Log.d("AdminDashboard", "No streams found in the 'streams' collection.")
+                    return@launch
+                }
+
+                val teacherDocs = db.collection("users")
+                    .whereEqualTo("userRole", "teacher")
+                    .get()
+                    .await()
+
+                val teacherStreamCounts = teacherDocs.documents
+                    .mapNotNull { it.getString("stream") }
+                    .groupBy { it }
+                    .mapValues { it.value.size }
+
+                val entries = mutableListOf<Entry>()
+                val labels = mutableListOf<String>()
+
+                allStreams.forEachIndexed { index, streamName ->
+                    val count = teacherStreamCounts[streamName]?.toFloat() ?: 0f
+                    entries.add(Entry(index.toFloat(), count))
+                    labels.add(streamName)
+                }
+
+                val dataSet = LineDataSet(entries, "Teachers per Stream")
+                configureDataSet(dataSet)
+
+                val lineData = LineData(dataSet)
+
+                withContext(Dispatchers.Main) {
+                    configureChart(labels)
+                    lineChart.data = lineData
+                    lineChart.invalidate()
+                    lineChart.animateY(1200)
+                }
+
+            } catch (e: Exception) {
+                Log.e("AdminDashboard", "Error setting up teacher stream chart", e)
+            }
+        }
+    }
+
+    private fun configureDataSet(dataSet: LineDataSet) {
+        dataSet.color = ContextCompat.getColor(this, R.color.primary)
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.text_primary)
+        dataSet.lineWidth = 2f
         dataSet.circleRadius = 5f
-        dataSet.setCircleColor(getColor(R.color.primary))
+        dataSet.setCircleColor(ContextCompat.getColor(this, R.color.primary))
+        dataSet.valueTextSize = 12f
         dataSet.setDrawFilled(true)
-        dataSet.fillColor = getColor(R.color.primary)
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
+        dataSet.fillColor = ContextCompat.getColor(this, R.color.primary)
+        dataSet.fillAlpha = 80
+        dataSet.mode = LineDataSet.Mode.LINEAR
+    }
 
-        val lineData = LineData(dataSet)
-        lineChart.data = lineData
-
-        val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-        lineChart.xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(months)
-        lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        lineChart.xAxis.granularity = 1f
-        lineChart.axisRight.isEnabled = false
+    private fun configureChart(labels: List<String>) {
         lineChart.description.isEnabled = false
-        lineChart.legend.isEnabled = false
-        lineChart.animateY(1000)
-        lineChart.invalidate()
+        lineChart.axisRight.isEnabled = false
+        lineChart.legend.isEnabled = true
+        lineChart.legend.textSize = 12f
+
+        val xAxis = lineChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.granularity = 1f
+        xAxis.setLabelCount(labels.size, false)
+        xAxis.valueFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val index = value.toInt()
+                return if (index >= 0 && index < labels.size) labels[index] else ""
+            }
+        }
+        xAxis.textColor = ContextCompat.getColor(this, R.color.text_secondary)
+        xAxis.textSize = 11f
+
+        val yAxis = lineChart.axisLeft
+        yAxis.granularity = 1f
+        yAxis.axisMinimum = 0f
+        yAxis.textColor = ContextCompat.getColor(this, R.color.text_secondary)
     }
 }

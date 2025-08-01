@@ -75,6 +75,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical"
+                            android:background="@color/background"
                             android:gravity="center">
 
                             <TextView
@@ -106,6 +107,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:background="@color/background"
                             android:orientation="vertical"
                             android:gravity="center">
 
@@ -140,13 +142,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
+                        android:background="@color/background"
                         android:gravity="center">
 
                         <TextView
-                            android:id="@+id/tvMonthlyRevenue"
+                            android:id="@+id/tvPendingApprovalsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rs. 0"
+                            android:text="0"
                             android:textSize="28sp"
                             android:textStyle="bold"
                             android:textColor="@color/primary" />
@@ -154,7 +157,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Monthly Revenue"
+                            android:text="Pending Approvals"
                             android:textSize="16sp"
                             android:textColor="@color/text_primary" />
                     </LinearLayout>
