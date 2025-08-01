@@ -1,7 +1,19 @@
-<!-- res/layout/fragment_student_discussion_chat.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/background">
+
+    <ImageView
+        android:id="@+id/ivDiscussionImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        tools:src="@drawable/placeholder"
+        tools:visibility="visible"
+        android:contentDescription="Discussion Image"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChat"
@@ -25,7 +37,9 @@
             android:layout_height="wrap_content"
             android:hint="Type a message"
             android:background="@drawable/edittext_bg"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:inputType="textMultiLine"
+            android:maxLines="5"/>
 
         <Button
             android:id="@+id/btnSend"
@@ -33,6 +47,7 @@
             android:layout_height="wrap_content"
             android:text="Send"
             android:backgroundTint="@color/primary"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 </LinearLayout>
