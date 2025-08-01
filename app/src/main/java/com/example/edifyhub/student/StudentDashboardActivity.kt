@@ -42,25 +42,25 @@ class StudentDashboardActivity : AppCompatActivity() {
 
         if(userId != null){
             db.collection("users").document(userId!!).get()
-            .addOnSuccessListener { document ->
-                if(document != null && document.exists()){
-                    val username = document.getString("username") ?: "student"
-                    findViewById<TextView>(R.id.username).text = "Hello, $username"
-                }else{
+                .addOnSuccessListener { document ->
+                    if(document != null && document.exists()){
+                        val username = document.getString("username") ?: "student"
+                        findViewById<TextView>(R.id.username).text = "Hello, $username"
+                    }else{
+                        findViewById<TextView>(R.id.username).text = "Hello, Student"
+                    }
+                }
+                .addOnFailureListener { exception ->
                     findViewById<TextView>(R.id.username).text = "Hello, Student"
                 }
-            }
-            .addOnFailureListener { exception ->
-                findViewById<TextView>(R.id.username).text = "Hello, Student"
-            }
         }
 
         // get completed quizzes & success rate
         if (userId != null) {
             userId?.let { safeUserId ->
                 val attemptedQuizzesRef = db.collection("users")
-                .document(safeUserId)
-                .collection("attemptedQuizzes")
+                    .document(safeUserId)
+                    .collection("attemptedQuizzes")
 
                 val discussionRef = db.collection("users")
                     .document(safeUserId)
@@ -68,34 +68,34 @@ class StudentDashboardActivity : AppCompatActivity() {
 
                 attemptedQuizzesRef.get()
                     .addOnSuccessListener { documents ->
-                    val totalDocs = documents.size()
-                    var sumOfAverages = 0.0
+                        val totalDocs = documents.size()
+                        var sumOfAverages = 0.0
 
-                    for (doc in documents) {
-                        val score = doc.getLong("score")?.toDouble() ?: 0.0
-                        val total = doc.getLong("total")?.toDouble() ?: 1.0 // avoid divide by zero
+                        for (doc in documents) {
+                            val score = doc.getLong("score")?.toDouble() ?: 0.0
+                            val total = doc.getLong("total")?.toDouble() ?: 1.0 // avoid divide by zero
 
-                        val quizAverage = score / total
-                        val cappedAverage = minOf(quizAverage, 1.0) // cap at 100% if needed
+                            val quizAverage = score / total
+                            val cappedAverage = minOf(quizAverage, 1.0) // cap at 100% if needed
 
-                        sumOfAverages += cappedAverage
+                            sumOfAverages += cappedAverage
+                        }
+
+                        val finalAverage = if (totalDocs > 0) sumOfAverages / totalDocs else 0.0
+                        val percentage = finalAverage * 100
+
+                        // completed quizzes
+                        findViewById<TextView>(R.id.completedQuizzes).text = "$totalDocs"
+
+                        // success rate
+                        val successRateText = "${String.format("%.2f", percentage)}%"
+                        findViewById<TextView>(R.id.rate).text = successRateText
+
                     }
-
-                    val finalAverage = if (totalDocs > 0) sumOfAverages / totalDocs else 0.0
-                    val percentage = finalAverage * 100
-
-                    // completed quizzes
-                    findViewById<TextView>(R.id.completedQuizzes).text = "$totalDocs"
-
-                    // success rate
-                    val successRateText = "${String.format("%.2f", percentage)}%"
-                    findViewById<TextView>(R.id.rate).text = successRateText
-
-                }
-                .addOnFailureListener {
-                    findViewById<TextView>(R.id.completedQuizzes).text = "0"
-                    findViewById<TextView>(R.id.rate).text = "0.00%"
-                }
+                    .addOnFailureListener {
+                        findViewById<TextView>(R.id.completedQuizzes).text = "0"
+                        findViewById<TextView>(R.id.rate).text = "0.00%"
+                    }
 
 
                 discussionRef.get()
