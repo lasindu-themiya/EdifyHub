@@ -1,13 +1,17 @@
 package com.example.edifyhub.teacher
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.*
+import android.view.MotionEvent
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.text.SimpleDateFormat
 import java.util.*
 
 class TeacherQuizScheduleFragment : Fragment() {
@@ -15,6 +19,8 @@ class TeacherQuizScheduleFragment : Fragment() {
     private lateinit var adapter: QuizScheduleAdapter
     private val allItems = mutableListOf<QuizScheduleItem>()
     private var userId: String? = null
+    private var selectedDate: Date? = null
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +33,44 @@ class TeacherQuizScheduleFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = QuizScheduleAdapter(userId)
         recyclerView.adapter = adapter
+
+        val searchView = root.findViewById<SearchView>(R.id.searchViewDate)
+        val searchEditText = searchView.findViewById<android.widget.EditText>(androidx.appcompat.R.id.search_src_text)
+        searchEditText.setTextColor(resources.getColor(R.color.primary, null))
+        searchEditText.setHintTextColor(resources.getColor(R.color.text_primary, null))
+
+        searchView.isFocusable = false
+        searchView.isFocusableInTouchMode = false
+        searchView.setIconifiedByDefault(false)
+        searchView.clearFocus()
+        searchView.setOnQueryTextFocusChangeListener { _, _ -> searchView.clearFocus() }
+
+        // Prevent keyboard and double events
+        searchEditText.isFocusable = false
+        searchEditText.isFocusableInTouchMode = false
+
+        searchEditText.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val cal = Calendar.getInstance()
+                DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                    cal.set(year, month, dayOfMonth, 0, 0, 0)
+                    selectedDate = cal.time
+                    searchView.setQuery(dateFormat.format(selectedDate!!), false)
+                    filterAndSortQuizzes()
+                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+                return@setOnTouchListener true
+            }
+            false
+        }
+
+        searchView.setOnTouchListener(null)
+        searchView.setOnClickListener(null)
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean = false
+        })
+
         fetchQuizzes()
         return root
     }
@@ -98,5 +142,24 @@ class TeacherQuizScheduleFragment : Fragment() {
                 }
                 adapter.submitList(allItems.toList())
             }
+    }
+
+    private fun filterAndSortQuizzes() {
+        if (selectedDate == null) {
+            adapter.submitList(allItems.toList())
+            return
+        }
+        val filtered = allItems.filter {
+            it is QuizScheduleItem.QuizItem &&
+                    (it.quiz.meetingAt != null && dateFormat.format(it.quiz.meetingAt!!) == dateFormat.format(selectedDate!!))
+        }.sortedBy {
+            (it as QuizScheduleItem.QuizItem).quiz.meetingAt
+        }
+        val result = mutableListOf<QuizScheduleItem>()
+        if (filtered.isNotEmpty()) {
+            result.add(QuizScheduleItem.Header("Filtered by ${dateFormat.format(selectedDate!!)} Meetings"))
+            result.addAll(filtered)
+        }
+        adapter.submitList(result)
     }
 }

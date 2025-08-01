@@ -1,9 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchViewDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Select date to filter"
+        android:iconifiedByDefault="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@color/surface"
+        android:elevation="4dp"
+        android:layout_marginBottom="8dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/quiz_schedule_recycler"
