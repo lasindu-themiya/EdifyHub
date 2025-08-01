@@ -43,6 +43,23 @@ class TeacherDashboardActivity : AppCompatActivity() {
         navigationView = findViewById(R.id.navigationView)
         drawerHandler = TeacherDrawerMenuHandler(this, drawerLayout, navigationView, toolbar, userId)
 
+
+        if(userId != null){
+            db.collection("users").document(userId!!).get()
+                .addOnSuccessListener { document ->
+                    if(document != null && document.exists()){
+                        val username = document.getString("username") ?: "student"
+                        findViewById<TextView>(R.id.username).text = "Hello, $username"
+                    }else{
+                        findViewById<TextView>(R.id.username).text = "Hello, Teacher"
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    findViewById<TextView>(R.id.username).text = "Hello, Teacher"
+                }
+        }
+
+
         if (userId != null) {
             fetchMonthlyRevenue(userId!!)
             loadTotalQuizzes(userId!!)
