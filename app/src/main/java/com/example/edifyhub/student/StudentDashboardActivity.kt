@@ -7,6 +7,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
@@ -111,7 +112,7 @@ class StudentDashboardActivity : AppCompatActivity() {
 
 
         //search quizzes navigation
-        val searchQuizzes = findViewById<ImageButton>(R.id.searchQuizzes)
+        val searchQuizzes = findViewById<CardView>(R.id.searchForQuizzes)
         searchQuizzes.setOnClickListener {
             val intent = Intent(this, StudentQuizListActivity::class.java)
             intent.putExtra("USER_ID", userId)
@@ -119,7 +120,7 @@ class StudentDashboardActivity : AppCompatActivity() {
         }
 
         //create discussion navigation
-        val createDiscussion = findViewById<ImageButton>(R.id.searchDiscussions)
+        val createDiscussion = findViewById<CardView>(R.id.startDiscussion)
         createDiscussion.setOnClickListener{
             val intent = Intent(this, StudentCreateDiscussionActivity::class.java)
             intent.putExtra("USER_ID", userId)
