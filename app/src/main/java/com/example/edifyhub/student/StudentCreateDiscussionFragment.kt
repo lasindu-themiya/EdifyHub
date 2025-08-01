@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/edifyhub/student/StudentCreateDiscussionFragment.kt
 package com.example.edifyhub.student
 
 import android.app.Activity
@@ -33,6 +32,7 @@ class StudentCreateDiscussionFragment : Fragment() {
     private lateinit var btnUploadImage: Button
     private lateinit var btnTakePhoto: Button
     private lateinit var btnCreateDiscussion: Button
+    private lateinit var progressBar: ProgressBar
 
     private var selectedImageUri: Uri? = null
     private var imageUrl: String? = null
@@ -50,6 +50,7 @@ class StudentCreateDiscussionFragment : Fragment() {
         btnUploadImage = view.findViewById(R.id.btnUploadImage)
         btnTakePhoto = view.findViewById(R.id.btnTakePhoto)
         btnCreateDiscussion = view.findViewById(R.id.btnCreateDiscussion)
+        progressBar = view.findViewById(R.id.progressBar)
 
         val db = FirebaseFirestore.getInstance()
         val subjectList = mutableListOf<String>()
@@ -115,7 +116,6 @@ class StudentCreateDiscussionFragment : Fragment() {
                 "status" to "open"
             )
 
-            // Save under user's subcollection
             db.collection("users").document(userId!!)
                 .collection("discussions")
                 .add(discussion)
@@ -158,7 +158,8 @@ class StudentCreateDiscussionFragment : Fragment() {
 
     private fun uploadImageToCloudinary(uri: Uri) {
         Glide.with(this).load(uri).centerCrop().into(imagePreview)
-        btnCreateDiscussion.isEnabled = false // Disable until upload finishes
+        progressBar.visibility = View.VISIBLE
+        btnCreateDiscussion.isEnabled = false
         MediaManager.get().upload(uri)
             .callback(object : UploadCallback {
                 override fun onStart(requestId: String?) {}
@@ -166,14 +167,17 @@ class StudentCreateDiscussionFragment : Fragment() {
                 override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
                     imageUrl = resultData["secure_url"] as? String
                     btnCreateDiscussion.isEnabled = true
+                    progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Image uploaded!", Toast.LENGTH_SHORT).show()
                 }
                 override fun onError(requestId: String?, error: ErrorInfo?) {
                     btnCreateDiscussion.isEnabled = true
+                    progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Upload failed: ${error?.description}", Toast.LENGTH_SHORT).show()
                 }
                 override fun onReschedule(requestId: String?, error: ErrorInfo?) {
                     btnCreateDiscussion.isEnabled = true
+                    progressBar.visibility = View.GONE
                 }
             }).dispatch()
     }
