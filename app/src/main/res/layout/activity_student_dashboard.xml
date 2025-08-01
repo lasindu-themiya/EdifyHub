@@ -215,6 +215,7 @@
                     android:layout_marginBottom="20dp">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/searchForQuizzes"
                         android:layout_width="0dp"
                         android:layout_height="120dp"
                         android:layout_weight="2"
@@ -260,6 +261,7 @@
                     android:layout_marginBottom="20dp">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/startDiscussion"
                         android:layout_width="0dp"
                         android:layout_height="120dp"
                         android:layout_weight="2"
