@@ -6,6 +6,6 @@
     <string name="navigation_drawer_close">Close navigation</string>
     <string name="user_avatar">User profile picture</string>
     <string name="default_web_client_id">113772520495-csh6a83rijna811n5ivpmufekitka0i1.apps.googleusercontent.com</string>
-
+    <string name="discussion_image">Discussion image</string>
 
 </resources>

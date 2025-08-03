@@ -63,6 +63,7 @@ class OtherStudentsOpenDiscussionFragment : Fragment() {
                 var loadedCount = 0
                 for (userDoc in userDocs) {
                     val userId = userDoc.id
+                    val ownerUsername = userDoc.getString("username") ?: "Anonymous"
                     db.collection("users").document(userId)
                         .collection("discussions")
                         .whereEqualTo("status", "open")
@@ -77,7 +78,8 @@ class OtherStudentsOpenDiscussionFragment : Fragment() {
                                         subject = doc.getString("subject") ?: "",
                                         context = doc.getString("context") ?: "",
                                         imageUrl = doc.getString("imageUrl") ?: "",
-                                        status = doc.getString("status") ?: ""
+                                        status = doc.getString("status") ?: "",
+                                        ownerUsername = ownerUsername
                                     )
                                 )
                             }

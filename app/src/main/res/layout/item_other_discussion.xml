@@ -1,53 +1,74 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:background="@color/surface"
-    android:layout_margin="8dp"
-    android:elevation="6dp"
-    android:clipToOutline="true">
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="8dp"
+    android:layout_margin="12dp"
+    card_view:cardBackgroundColor="@color/surface">
 
-    <ImageView
-        android:id="@+id/ivImage"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/placeholder"
-        android:background="@color/background"
-        android:layout_marginBottom="8dp"/>
-
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="@color/text_primary"
-        android:layout_marginTop="8dp"/>
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvSubject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@color/primary"
-        android:layout_marginTop="4dp"/>
+        <ImageView
+            android:id="@+id/ivImage"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder"
+            android:background="@color/background"
+            android:layout_marginBottom="12dp"
+            android:contentDescription="@string/discussion_image"/>
 
-    <TextView
-        android:id="@+id/tvContext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="@color/text_secondary"
-        android:layout_marginTop="4dp"/>
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/primary"
+            android:layout_marginBottom="2dp"/>
 
-    <Button
-        android:id="@+id/btnChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chat"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/primary"
-        android:textColor="@color/white"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="6dp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/tvSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/primary"
+            android:background="@drawable/subject_bg"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvContext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="10dp"/>
+
+        <Button
+            android:id="@+id/btnChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chat"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            android:layout_gravity="end"
+            android:elevation="2dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -8,5 +8,6 @@ data class OtherDiscussion(
     val subject: String = "",
     val context: String = "",
     val imageUrl: String = "",
-    val status: String = ""
+    val status: String = "",
+    val ownerUsername: String =""
 )

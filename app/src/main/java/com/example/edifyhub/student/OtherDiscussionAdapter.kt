@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.edifyhub.R
 
+
+
 class OtherDiscussionAdapter(
     private var discussions: List<OtherDiscussion>,
     private val onChatClick: (String, String) -> Unit
@@ -27,6 +29,7 @@ class OtherDiscussionAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val discussion = discussions[position]
         holder.tvName.text = discussion.name
+        holder.tvUsername.text = "By: ${discussion.ownerUsername}"
         holder.tvSubject.text = discussion.subject
         holder.tvContext.text = discussion.context
         Glide.with(holder.itemView.context)
@@ -40,6 +43,7 @@ class OtherDiscussionAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvName)
+        val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
         val tvSubject: TextView = itemView.findViewById(R.id.tvSubject)
         val tvContext: TextView = itemView.findViewById(R.id.tvContext)
         val ivImage: ImageView = itemView.findViewById(R.id.ivImage)
