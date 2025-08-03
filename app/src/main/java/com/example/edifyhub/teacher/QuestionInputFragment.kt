@@ -168,7 +168,24 @@ class QuestionInputFragment : Fragment() {
             val spinnerLabel = createLabel("Select Correct Answer")
             val correctAnswerSpinner = Spinner(requireContext()).apply {
                 val items = (1..numAnswers).map { "Answer $it" }
-                adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, items)
+                val spinnerAdapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, items) {
+                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = super.getView(position, convertView, parent)
+                        val textView = view.findViewById<TextView>(android.R.id.text1)
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                        return view
+                    }
+
+                    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = super.getDropDownView(position, convertView, parent)
+                        val textView = view.findViewById<TextView>(android.R.id.text1)
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                        view.setBackgroundColor(ContextCompat.getColor(context, R.color.white))
+                        return view
+                    }
+                }
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                adapter = spinnerAdapter
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                     topMargin = 8.dpToPx()
                     bottomMargin = 8.dpToPx()
