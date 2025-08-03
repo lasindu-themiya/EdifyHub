@@ -11,13 +11,19 @@
         android:layout_height="wrap_content"
         android:padding="24dp">
 
-        <androidx.cardview.widget.CardView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
+            android:background="@color/primary"
+            android:padding="2dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="18dp"
             app:cardElevation="6dp"
-            android:background="@color/white">
+            app:cardBackgroundColor="@color/white">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -69,7 +75,7 @@
                     android:layout_marginBottom="8dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
+        </FrameLayout>
         <Button
             android:id="@+id/btnViewLocation"
             android:layout_width="match_parent"
