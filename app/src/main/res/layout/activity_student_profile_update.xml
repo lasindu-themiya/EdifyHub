@@ -192,6 +192,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/surface"
+        app:itemTextColor="@color/text_primary"
+        app:itemIconTint="@color/text_primary"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/student_drawer_menu" />
