@@ -38,122 +38,95 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        // Forget password page
+        // Navigation buttons
         binding.forgetUserPassword.setOnClickListener {
-            val intent = Intent(this, EnterEmailActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, EnterEmailActivity::class.java))
         }
-
-        // Teacher signup page
         binding.teacherSignUp.setOnClickListener {
-            val intent = Intent(this, TeacherSignupActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, TeacherSignupActivity::class.java))
         }
-
-        // Student signup page
         binding.studentSignUp.setOnClickListener {
-            val intent = Intent(this, StudentSignupActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, StudentSignupActivity::class.java))
         }
 
-        // Sign in with email and password
+        // Email/password SIGN-IN
         binding.signinbtn.setOnClickListener {
-            val email = binding.loginusername.text.toString()
+            val email = binding.loginusername.text.toString().trim()
             val password = binding.loginpassword.text.toString()
 
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        val userId = firebaseAuth.currentUser?.uid
-                        if (userId != null) {
-                            db.collection("users").document(userId).get()
-                                .addOnSuccessListener { document ->
-                                    if (document != null && document.exists()) {
-                                        val role = document.getString("userRole")
-                                        val status = document.getString("status")
-                                        when (role) {
-                                            "admin" -> {
-                                                val intent = Intent(this, AdminDashboardActivity::class.java)
-                                                intent.putExtra("USER_ID", userId)
-                                                startActivity(intent)
-                                                finish()
-                                            }
-                                            "teacher" -> {
-                                                if (status == "pending") {
-                                                    Toast.makeText(this, "Sent for approval", Toast.LENGTH_SHORT).show()
-                                                } else {
-                                                    val intent = Intent(this, TeacherDashboardActivity::class.java)
-                                                    intent.putExtra("USER_ID", userId)
-                                                    startActivity(intent)
-                                                    finish()
-                                                }
-                                            }
-                                            "student" -> {
-                                                val intent = Intent(this, StudentDashboardActivity::class.java)
-                                                intent.putExtra("USER_ID", userId)
-                                                startActivity(intent)
-                                                finish()
-                                            }
-                                            else -> {
-                                                Toast.makeText(this, "Unknown user role", Toast.LENGTH_SHORT).show()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Empty fields are not allowed!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val userId = firebaseAuth.currentUser?.uid
+                    if (userId != null) {
+                        // Load role from Firestore and redirect accordingly
+                        db.collection("users").document(userId).get()
+                            .addOnSuccessListener { document ->
+                                if (document != null && document.exists()) {
+                                    val role = document.getString("userRole")
+                                    val status = document.getString("status")
+                                    when (role) {
+                                        "admin" -> startDashboard(AdminDashboardActivity::class.java, userId)
+                                        "teacher" -> {
+                                            if (status == "pending") {
+                                                Toast.makeText(this, "Sent for approval", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                startDashboard(TeacherDashboardActivity::class.java, userId)
                                             }
                                         }
-                                    } else {
-                                        Toast.makeText(this, "User not exists! please Sign Up.", Toast.LENGTH_SHORT).show()
+                                        "student" -> startDashboard(StudentDashboardActivity::class.java, userId)
+                                        else -> Toast.makeText(this, "Unknown user role", Toast.LENGTH_SHORT).show()
                                     }
-                                }.addOnFailureListener { e ->
-                                    Toast.makeText(this, "Error fetching user role: ${e.message}", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this, "User does not exist! Please sign up.", Toast.LENGTH_SHORT).show()
                                 }
-                        } else {
-                            Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
-                        }
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
                     } else {
-                        Toast.makeText(this, "Please Signup first!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
                     }
+                } else {
+                    Toast.makeText(this, "Login failed: ${it.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Empty fields are not allowed!", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Google sign in section
+        // Google Sign-In setup
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         binding.googleLogin.setOnClickListener {
             signInGoogle()
         }
 
-
-        //GitHub sign in section
+        // GitHub Sign-In
         binding.githubLogin.setOnClickListener {
             val provider = OAuthProvider.newBuilder("github.com")
             val pendingResultTask = firebaseAuth.pendingAuthResult
             if (pendingResultTask != null) {
-                pendingResultTask
-                    .addOnSuccessListener { authResult ->
-                        handleGitHubResult()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "GitHub Sign In Failed: ${it.message}", Toast.LENGTH_SHORT).show()
-                    }
+                pendingResultTask.addOnSuccessListener {
+                    handleGitHubResult()
+                }.addOnFailureListener {
+                    Toast.makeText(this, "GitHub Sign In Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                firebaseAuth
-                    .startActivityForSignInWithProvider(this, provider.build())
+                firebaseAuth.startActivityForSignInWithProvider(this, provider.build())
                     .addOnSuccessListener {
                         handleGitHubResult()
-                    }
-                    .addOnFailureListener {
+                    }.addOnFailureListener {
                         Toast.makeText(this, "GitHub Sign In Failed: ${it.message}", Toast.LENGTH_SHORT).show()
                     }
             }
         }
-
-
     }
 
     private fun signInGoogle() {
@@ -166,22 +139,84 @@ class LoginActivity : AppCompatActivity() {
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            handleResults(task)
+            handleGoogleSignInResult(task)
         }
     }
 
-    private fun handleResults(task: Task<GoogleSignInAccount>) {
-        if (task.isSuccessful) {
-            val account: GoogleSignInAccount? = task.result
-            if (account != null) {
-                updateUI(account)
+    // Handle Google sign-in flow with full role & provider checks
+    private fun handleGoogleSignInResult(task: Task<GoogleSignInAccount>) {
+        if (!task.isSuccessful) {
+            Toast.makeText(this, "Google sign-in failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val account = task.result
+        val email = account?.email
+        if (email == null) {
+            Toast.makeText(this, "Google account email is null!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Check if email already exists and which providers are linked
+        firebaseAuth.fetchSignInMethodsForEmail(email)
+            .addOnSuccessListener { result ->
+                val methods = result.signInMethods ?: emptyList()
+
+                // Check Firestore for user role by email
+                db.collection("users").whereEqualTo("email", email).get()
+                    .addOnSuccessListener { query ->
+                        if (!query.isEmpty) {
+                            val userDoc = query.documents[0]
+                            val role = userDoc.getString("userRole") ?: ""
+
+                            // Role-based access control
+                            if (role == "teacher") {
+                                // Teachers are NOT allowed to sign in with Google
+                                Toast.makeText(
+                                    this,
+                                    "Teachers must sign in with Email and Password only.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                googleSignInClient.signOut()
+                                firebaseAuth.signOut()
+                                return@addOnSuccessListener
+                            }
+
+                            if (role == "student") {
+                                // If email exists with email/password only (no google linked), block google login
+                                if (methods.contains("password") && !methods.contains("google.com")) {
+                                    Toast.makeText(
+                                        this,
+                                        "This email is registered with Email/Password. Please sign in using Email/Password.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    googleSignInClient.signOut()
+                                    firebaseAuth.signOut()
+                                    return@addOnSuccessListener
+                                }
+
+                                // Allowed: Student Google sign-in
+                                signInWithGoogleCredential(account)
+                            } else {
+                                Toast.makeText(this, "Unknown user role or no permission for Google sign-in.", Toast.LENGTH_SHORT).show()
+                                googleSignInClient.signOut()
+                                firebaseAuth.signOut()
+                            }
+                        } else {
+                            // New user email - allow Google sign-in for students
+                            signInWithGoogleCredential(account)
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Error checking user role: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
-        } else {
-            Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
-        }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error checking sign-in methods: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
-    private fun updateUI(account: GoogleSignInAccount) {
+    private fun signInWithGoogleCredential(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener { authResult ->
             if (authResult.isSuccessful) {
@@ -190,56 +225,52 @@ class LoginActivity : AppCompatActivity() {
                     db.collection("users").document(userId).get()
                         .addOnSuccessListener { document ->
                             if (document != null && document.exists()) {
-                                // Existing user, go to dashboard
-                                val intent = Intent(this, StudentDashboardActivity::class.java)
-                                intent.putExtra("USER_ID", userId)
-                                startActivity(intent)
+                                startDashboard(StudentDashboardActivity::class.java, userId)
                             } else {
-                                // New user, go to profile update
-                                val intent = Intent(this, StudentProfileUpdateActivity::class.java)
-                                intent.putExtra("USER_ID", userId)
-                                startActivity(intent)
+                                startActivity(Intent(this, StudentProfileUpdateActivity::class.java).putExtra("USER_ID", userId))
                             }
                             finish()
                         }
                         .addOnFailureListener { e ->
                             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
-                } else {
-                    Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, authResult.exception.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Google Authentication failed: ${authResult.exception?.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-
-    //GitHub section
+    // GitHub sign-in with same checks as Google
     private fun handleGitHubResult() {
         val userId = firebaseAuth.currentUser?.uid
         if (userId != null) {
             db.collection("users").document(userId).get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
-                        val intent = Intent(this, StudentDashboardActivity::class.java)
-                        intent.putExtra("USER_ID", userId)
-                        startActivity(intent)
+                        val role = document.getString("userRole")
+                        if (role == "teacher") {
+                            Toast.makeText(this, "Teachers must sign in with Email and Password only.", Toast.LENGTH_LONG).show()
+                            firebaseAuth.signOut()
+                            return@addOnSuccessListener
+                        }
+                        // For students, proceed to dashboard
+                        startDashboard(StudentDashboardActivity::class.java, userId)
                     } else {
-                        val intent = Intent(this, StudentProfileUpdateActivity::class.java)
-                        intent.putExtra("USER_ID", userId)
-                        startActivity(intent)
+                        startActivity(Intent(this, StudentProfileUpdateActivity::class.java).putExtra("USER_ID", userId))
+                        finish()
                     }
-                    finish()
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-        } else {
-            Toast.makeText(this, "User ID is null!", Toast.LENGTH_SHORT).show()
         }
     }
 
-
-
+    private fun startDashboard(activityClass: Class<*>, userId: String) {
+        val intent = Intent(this, activityClass)
+        intent.putExtra("USER_ID", userId)
+        startActivity(intent)
+        finish()
+    }
 }
