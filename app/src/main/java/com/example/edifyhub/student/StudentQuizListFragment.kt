@@ -48,6 +48,27 @@ class StudentQuizListFragment : Fragment() {
 
         progressBar.visibility = View.VISIBLE
 
+        // --- FIX: Initialize adapter synchronously ---
+        quizAdapter = QuizAdapter(
+            onAttendClick = { quizItem -> showAttendQuizFragment(quizItem) },
+            onViewQuizClick = { quizItem -> showViewQuizFragment(quizItem) },
+            onPayClick = { quizItem ->
+                val intent = Intent(requireContext(), PayHerePaymentActivity::class.java).apply {
+                    putExtra("quizId", quizItem.id)
+                    putExtra("quizName", quizItem.name)
+                    putExtra("quizAmount", quizItem.amount)
+                    putExtra("teacherId", quizItem.teacherId)
+                    putExtra("teacherName", quizItem.teacherName)
+                }
+                paymentLauncher.launch(intent)
+            },
+            attemptedQuizIds = attemptedQuizIds,
+            paidQuizIds = paidQuizIds
+        )
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = quizAdapter
+        // --- End of FIX ---
+
         // Fetch student stream first
         fetchStudentStream { stream ->
             studentStream = stream
@@ -61,25 +82,7 @@ class StudentQuizListFragment : Fragment() {
                         fetchPaidQuizIds { paidIds ->
                             paidQuizIds.clear()
                             paidQuizIds.addAll(paidIds)
-                            quizAdapter = QuizAdapter(
-                                onAttendClick = { quizItem -> showAttendQuizFragment(quizItem) },
-                                onViewQuizClick = { quizItem -> showViewQuizFragment(quizItem) },
-                                onPayClick = { quizItem ->
-                                    val intent = Intent(requireContext(), PayHerePaymentActivity::class.java).apply {
-                                        putExtra("quizId", quizItem.id)
-                                        putExtra("quizName", quizItem.name)
-                                        putExtra("quizAmount", quizItem.amount)
-                                        putExtra("teacherId", quizItem.teacherId)
-                                        putExtra("teacherName", quizItem.teacherName)
-                                    }
-                                    paymentLauncher.launch(intent)
-                                },
-                                attemptedQuizIds = attemptedQuizIds,
-                                paidQuizIds = paidQuizIds
-                            )
-                            recyclerView.layoutManager = LinearLayoutManager(requireContext())
-                            recyclerView.adapter = quizAdapter
-
+                            // Adapter is already initialized, just update data
                             fetchQuizzes { quizzes ->
                                 // Filter quizzes by stream subjects
                                 val filteredQuizzes = quizzes.filter { streamSubjects.contains(it.subject) }
@@ -87,6 +90,8 @@ class StudentQuizListFragment : Fragment() {
                                 allQuizzes.addAll(filteredQuizzes)
                                 quizAdapter.submitList(filteredQuizzes)
                                 progressBar.visibility = View.GONE
+                                // Re-apply filter in case text was restored before data was loaded
+                                filterQuizzes(subjectSearch.text.toString(), teacherSearch.text.toString())
                             }
 
                             listenForPaidQuizzesUpdates()
@@ -96,15 +101,6 @@ class StudentQuizListFragment : Fragment() {
             } else {
                 // If stream is not found, show no quizzes
                 allQuizzes.clear()
-                quizAdapter = QuizAdapter(
-                    onAttendClick = { quizItem -> showAttendQuizFragment(quizItem) },
-                    onViewQuizClick = { quizItem -> showViewQuizFragment(quizItem) },
-                    onPayClick = { quizItem -> /* ... */ },
-                    attemptedQuizIds = attemptedQuizIds,
-                    paidQuizIds = paidQuizIds
-                )
-                recyclerView.layoutManager = LinearLayoutManager(requireContext())
-                recyclerView.adapter = quizAdapter
                 quizAdapter.submitList(emptyList())
                 progressBar.visibility = View.GONE
             }
@@ -117,6 +113,11 @@ class StudentQuizListFragment : Fragment() {
     }
 
     private fun filterQuizzes(subject: String, teacher: String) {
+        // --- FIX: Add safety check ---
+        if (!::quizAdapter.isInitialized) {
+            return
+        }
+        // --- End of FIX ---
         val filtered = allQuizzes.filter {
             (subject.isBlank() || it.subject.contains(subject, ignoreCase = true)) &&
                     (teacher.isBlank() || it.teacherName.contains(teacher, ignoreCase = true))

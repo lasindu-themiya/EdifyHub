@@ -54,7 +54,43 @@ class StudentCreateDiscussionFragment : Fragment() {
 
         val db = FirebaseFirestore.getInstance()
         val subjectList = mutableListOf<String>()
-        val subjectAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, subjectList)
+        subjectList.add("Select Subject")
+        val subjectAdapter =
+            object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, subjectList) {
+                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                    val view = super.getView(position, convertView, parent)
+                    val textView = view.findViewById<TextView>(android.R.id.text1)
+                    textView.setTextColor(
+                        androidx.core.content.ContextCompat.getColor(
+                            context,
+                            R.color.text_primary
+                        )
+                    )
+                    return view
+                }
+
+                override fun getDropDownView(
+                    position: Int,
+                    convertView: View?,
+                    parent: ViewGroup
+                ): View {
+                    val view = super.getDropDownView(position, convertView, parent)
+                    val textView = view.findViewById<TextView>(android.R.id.text1)
+                    textView.setTextColor(
+                        androidx.core.content.ContextCompat.getColor(
+                            context,
+                            R.color.text_primary
+                        )
+                    )
+                    view.setBackgroundColor(
+                        androidx.core.content.ContextCompat.getColor(
+                            context,
+                            R.color.white
+                        )
+                    )
+                    return view
+                }
+            }
         subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSubject.adapter = subjectAdapter
 
@@ -70,6 +106,7 @@ class StudentCreateDiscussionFragment : Fragment() {
                             .addOnSuccessListener { streamDoc ->
                                 val subjects = streamDoc.get("subjects") as? List<*>
                                 subjectList.clear()
+                                subjectList.add("Select Subject")
                                 if (subjects != null) {
                                     subjectList.addAll(subjects.filterIsInstance<String>())
                                 }
