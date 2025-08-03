@@ -5,16 +5,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.example.edifyhub.R
 import com.google.android.material.button.MaterialButton
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
+import com.example.edifyhub.R
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,6 +27,7 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
 
     private lateinit var imageProfile: ImageView
     private lateinit var btnEditProfilePic: ImageView
+    private lateinit var profileImageProgressBar: ProgressBar
     private lateinit var etName: EditText
     private lateinit var etAge: EditText
     private lateinit var etMobile: EditText
@@ -50,6 +51,7 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
 
         imageProfile = findViewById(R.id.imageProfile)
         btnEditProfilePic = findViewById(R.id.btnEditProfilePic)
+        profileImageProgressBar = findViewById(R.id.profileImageProgressBar)
         etName = findViewById(R.id.etName)
         etAge = findViewById(R.id.etAge)
         etMobile = findViewById(R.id.etMobile)
@@ -60,31 +62,9 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val firebaseUser = FirebaseAuth.getInstance().currentUser
 
-        // Populate Spinner with streams from Firestore
         val streamList = mutableListOf<String>()
         streamList.add("Select a stream")
-        val adapter =
-            object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, streamList) {
-                override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
-                    val view = super.getView(position, convertView, parent)
-                    (view.findViewById<TextView>(android.R.id.text1)).setTextColor(
-                        androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
-                    )
-                    return view
-                }
-
-                override fun getDropDownView(
-                    position: Int,
-                    convertView: android.view.View?,
-                    parent: android.view.ViewGroup
-                ): android.view.View {
-                    val view = super.getDropDownView(position, convertView, parent)
-                    val textView = view.findViewById<TextView>(android.R.id.text1)
-                    textView.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
-                    view.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.white))
-                    return view
-                }
-            }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, streamList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerALStream.adapter = adapter
 
@@ -96,17 +76,10 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
                 }
                 adapter.notifyDataSetChanged()
 
-                // Pre-select current stream if editing
                 if (userId != null) {
                     db.collection("users").document(userId)
                         .get()
                         .addOnSuccessListener { userDoc ->
-                            // --- FIX: Check if activity is valid before using Glide ---
-                            if (isFinishing || isDestroyed) {
-                                return@addOnSuccessListener
-                            }
-                            // --- End of FIX ---
-
                             val currentStream = userDoc.getString("stream")
                             val index = streamList.indexOf(currentStream)
                             if (index >= 0) spinnerALStream.setSelection(index)
@@ -186,17 +159,15 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.data
             selectedImageUri?.let { uri ->
+                profileImageProgressBar.visibility = ProgressBar.VISIBLE
                 MediaManager.get().upload(uri)
                     .callback(object : UploadCallback {
-                        override fun onStart(requestId: String?) {}
+                        override fun onStart(requestId: String?) {
+                            profileImageProgressBar.visibility = ProgressBar.VISIBLE
+                        }
                         override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
                         override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
-                            // --- FIX: Check if activity is valid before using Glide ---
-                            if (isFinishing || isDestroyed) {
-                                return
-                            }
-                            // --- End of FIX ---
-
+                            profileImageProgressBar.visibility = ProgressBar.GONE
                             val url = resultData["secure_url"] as? String
                             url?.let {
                                 profileImageUrl = it
@@ -215,9 +186,12 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
                             }
                         }
                         override fun onError(requestId: String?, error: ErrorInfo?) {
+                            profileImageProgressBar.visibility = ProgressBar.GONE
                             Toast.makeText(this@StudentProfileUpdateActivity, "Upload failed: ${error?.description}", Toast.LENGTH_SHORT).show()
                         }
-                        override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+                        override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                            profileImageProgressBar.visibility = ProgressBar.GONE
+                        }
                     }).dispatch()
             }
         }
