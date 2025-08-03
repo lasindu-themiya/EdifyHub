@@ -62,9 +62,31 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val firebaseUser = FirebaseAuth.getInstance().currentUser
 
+        // Populate Spinner with streams from Firestore
         val streamList = mutableListOf<String>()
         streamList.add("Select a stream")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, streamList)
+        val adapter =
+            object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, streamList) {
+                override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
+                    val view = super.getView(position, convertView, parent)
+                    (view.findViewById<TextView>(android.R.id.text1)).setTextColor(
+                        androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
+                    )
+                    return view
+                }
+
+                override fun getDropDownView(
+                    position: Int,
+                    convertView: android.view.View?,
+                    parent: android.view.ViewGroup
+                ): android.view.View {
+                    val view = super.getDropDownView(position, convertView, parent)
+                    val textView = view.findViewById<TextView>(android.R.id.text1)
+                    textView.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                    view.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.white))
+                    return view
+                }
+            }
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerALStream.adapter = adapter
 
@@ -80,6 +102,9 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
                     db.collection("users").document(userId)
                         .get()
                         .addOnSuccessListener { userDoc ->
+                            if (isFinishing || isDestroyed) {
+                                return@addOnSuccessListener
+                            }
                             val currentStream = userDoc.getString("stream")
                             val index = streamList.indexOf(currentStream)
                             if (index >= 0) spinnerALStream.setSelection(index)
@@ -167,6 +192,9 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
                         }
                         override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
                         override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
+                            if (isFinishing || isDestroyed) {
+                                return
+                            }
                             profileImageProgressBar.visibility = ProgressBar.GONE
                             val url = resultData["secure_url"] as? String
                             url?.let {
