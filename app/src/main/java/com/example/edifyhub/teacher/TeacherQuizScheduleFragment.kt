@@ -2,9 +2,10 @@ package com.example.edifyhub.teacher
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
-import android.view.MotionEvent
-import androidx.appcompat.widget.SearchView
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,41 +35,45 @@ class TeacherQuizScheduleFragment : Fragment() {
         adapter = QuizScheduleAdapter(userId)
         recyclerView.adapter = adapter
 
-        val searchView = root.findViewById<SearchView>(R.id.searchViewDate)
-        val searchEditText = searchView.findViewById<android.widget.EditText>(androidx.appcompat.R.id.search_src_text)
-        searchEditText.setTextColor(resources.getColor(R.color.primary, null))
-        searchEditText.setHintTextColor(resources.getColor(R.color.text_primary, null))
+        val dateSearch = root.findViewById<EditText>(R.id.dateSearch)
 
-        searchView.isFocusable = false
-        searchView.isFocusableInTouchMode = false
-        searchView.setIconifiedByDefault(false)
-        searchView.clearFocus()
-        searchView.setOnQueryTextFocusChangeListener { _, _ -> searchView.clearFocus() }
+        // Show date picker on click
+        dateSearch.setOnClickListener {
+            val cal = Calendar.getInstance()
+            DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                cal.set(year, month, dayOfMonth, 0, 0, 0)
+                selectedDate = cal.time
+                dateSearch.setText(dateFormat.format(selectedDate!!))
+                filterAndSortQuizzes()
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+        }
 
-        // Prevent keyboard and double events
-        searchEditText.isFocusable = false
-        searchEditText.isFocusableInTouchMode = false
-
-        searchEditText.setOnTouchListener { _, event ->
+        // Add clear (X) button functionality
+        dateSearch.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {
-                val cal = Calendar.getInstance()
-                DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
-                    cal.set(year, month, dayOfMonth, 0, 0, 0)
-                    selectedDate = cal.time
-                    searchView.setQuery(dateFormat.format(selectedDate!!), false)
-                    filterAndSortQuizzes()
-                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
-                return@setOnTouchListener true
+                val drawableEnd = 2
+                if (dateSearch.compoundDrawables[drawableEnd] != null) {
+                    val clearButtonStart: Float = (dateSearch.width - dateSearch.paddingEnd - dateSearch.compoundDrawables[drawableEnd]!!.bounds.width()).toFloat()
+                    if (event.x >= clearButtonStart) {
+                        dateSearch.text.clear()
+                        selectedDate = null
+                        filterAndSortQuizzes()
+                        return@setOnTouchListener true
+                    }
+                }
             }
             false
         }
 
-        searchView.setOnTouchListener(null)
-        searchView.setOnClickListener(null)
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
-            override fun onQueryTextChange(newText: String?): Boolean = false
+        // Optional: Add a clear (X) icon programmatically if not in your drawableEnd
+        dateSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Show/hide clear icon if needed
+                val clearIcon = if (s.isNullOrEmpty()) null else resources.getDrawable(R.drawable.ic_cross, null)
+                dateSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, if (clearIcon != null) R.drawable.ic_cross else 0, 0)
+            }
+            override fun afterTextChanged(s: Editable?) {}
         })
 
         fetchQuizzes()

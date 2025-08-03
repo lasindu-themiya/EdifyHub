@@ -1,14 +1,16 @@
 package com.example.edifyhub.student
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edifyhub.R
 import com.google.firebase.firestore.FirebaseFirestore
-import android.view.inputmethod.InputMethodManager
 import android.content.Context
 
 class OtherStudentsOpenDiscussionFragment : Fragment() {
@@ -24,25 +26,19 @@ class OtherStudentsOpenDiscussionFragment : Fragment() {
         adapter = OtherDiscussionAdapter(emptyList(), onChatClick = { userId, discussionId -> openChat(userId, discussionId) })
         recyclerView.adapter = adapter
 
-        val searchView = view.findViewById<androidx.appcompat.widget.SearchView>(R.id.searchViewSubject)
-        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
-            override fun onQueryTextChange(newText: String?): Boolean {
-                val filtered = if (newText.isNullOrBlank()) {
+        val subjectSearch = view.findViewById<EditText>(R.id.subjectSearch)
+        subjectSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val filtered = if (s.isNullOrBlank()) {
                     allDiscussions
                 } else {
-                    allDiscussions.filter { it.subject.contains(newText, ignoreCase = true) }
+                    allDiscussions.filter { it.subject.contains(s.toString(), ignoreCase = true) }
                 }
                 adapter.updateData(filtered)
-                return true
             }
+            override fun afterTextChanged(s: Editable?) {}
         })
-        searchView.setOnClickListener {
-            searchView.isIconified = false
-            searchView.requestFocus()
-            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(searchView.findViewById(androidx.appcompat.R.id.search_src_text), InputMethodManager.SHOW_IMPLICIT)
-        }
 
         loggedInUserId = arguments?.getString("USER_ID")
         fetchOtherDiscussions()

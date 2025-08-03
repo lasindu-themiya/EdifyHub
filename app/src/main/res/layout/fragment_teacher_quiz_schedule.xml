@@ -4,16 +4,19 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchViewDate"
+    <EditText
+        android:id="@+id/dateSearch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:queryHint="Select date to filter"
-        android:iconifiedByDefault="false"
+        android:layout_height="48dp"
+        android:hint="Select date to filter"
+        android:drawableStart="@drawable/ic_search"
+        android:background="@drawable/edittext_bg"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:background="@color/surface"
-        android:elevation="4dp"
         android:layout_marginBottom="8dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
