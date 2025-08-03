@@ -87,8 +87,6 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
             }
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerALStream.adapter = adapter
-        spinnerALStream.setBackgroundColor(resources.getColor(R.color.white, null))
-
 
         db.collection("streams")
             .get()
