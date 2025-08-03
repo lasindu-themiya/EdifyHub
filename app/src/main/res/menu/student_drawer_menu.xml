@@ -27,11 +27,11 @@
         android:icon="@drawable/ic_discussion" />
     <item
         android:id="@+id/nav_open_discussions"
-        android:title="Open Discussions"
+        android:title="My Discussions"
         android:icon="@drawable/ic_discussion_open" />
     <item
         android:id="@+id/nav_other_students_open_discussions"
-        android:title="Other Students' Open Discussions"
+        android:title="Others' Discussions"
         android:icon="@drawable/ic_discussion_open" />
     <item
         android:id="@+id/nav_logout"
