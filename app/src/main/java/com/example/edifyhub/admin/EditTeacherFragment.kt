@@ -6,61 +6,70 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import com.example.edifyhub.R
-import com.google.firebase.firestore.FirebaseFirestore
 
-class EditTeacherFragment(
-    private val teacher: Teacher,
-    private val onTeacherUpdated: (Teacher) -> Unit
-) : DialogFragment() {
+class EditTeacherFragment : DialogFragment() {
 
-    private val db = FirebaseFirestore.getInstance()
+    private var teacher: Teacher? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            teacher = it.getSerializable("teacher") as? Teacher
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_edit_teacher, container, false)
+        return inflater.inflate(R.layout.fragment_edit_teacher, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val etName = view.findViewById<EditText>(R.id.etTeacherName)
         val etSubject = view.findViewById<EditText>(R.id.etTeacherSubject)
         val etEmail = view.findViewById<EditText>(R.id.etTeacherEmail)
         val btnSave = view.findViewById<Button>(R.id.btnSaveTeacher)
+        val btnCancel = view.findViewById<Button>(R.id.btnCancel)
 
-        etName.setText(teacher.name)
-        etSubject.setText(teacher.subject)
-        etEmail.setText(teacher.email)
-
-        btnSave.setOnClickListener {
-            val updatedTeacher = teacher.copy(
-                name = etName.text.toString(),
-                subject = etSubject.text.toString(),
-                email = etEmail.text.toString(),
-            )
-            updateTeacherInFirestore(updatedTeacher)
+        teacher?.let {
+            etName.setText(it.name)
+            etSubject.setText(it.subject)
+            etEmail.setText(it.email)
         }
 
-        return view
-    }
+        btnSave.setOnClickListener {
+            val updatedName = etName.text.toString()
+            val updatedSubject = etSubject.text.toString()
+            val updatedEmail = etEmail.text.toString()
 
-    private fun updateTeacherInFirestore(updatedTeacher: Teacher) {
-        db.collection("users").document(updatedTeacher.id)
-            .update(
-                mapOf(
-                    "username" to updatedTeacher.name,
-                    "subject" to updatedTeacher.subject,
-                    "email" to updatedTeacher.email,
-                )
-            )
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Teacher updated", Toast.LENGTH_SHORT).show()
-                onTeacherUpdated(updatedTeacher)
+            if (updatedName.isNotEmpty() && updatedSubject.isNotEmpty()) {
+                val updatedTeacher = teacher?.copy(name = updatedName, subject = updatedSubject, email = updatedEmail)
+                if (updatedTeacher != null) {
+                    setFragmentResult("editTeacherRequest", bundleOf("updatedTeacher" to updatedTeacher))
+                }
                 dismiss()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+        }
+
+        btnCancel.setOnClickListener {
+            dismiss()
+        }
+    }
+
+    companion object {
+        fun newInstance(teacher: Teacher): EditTeacherFragment {
+            val fragment = EditTeacherFragment()
+            val args = Bundle()
+            args.putSerializable("teacher", teacher)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

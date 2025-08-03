@@ -1,7 +1,6 @@
 package com.example.edifyhub.admin
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -34,6 +33,7 @@ class AdminTeacherManageActivity : AppCompatActivity() {
         teachers = mutableListOf()
         setupRecyclerView()
         fetchTeachers()
+        setupFragmentResultListener()
     }
 
     private fun setupRecyclerView() {
@@ -73,27 +73,34 @@ class AdminTeacherManageActivity : AppCompatActivity() {
     }
 
     private fun showEditFragment(teacher: Teacher) {
-        // Hide the list
-        findViewById<RecyclerView>(R.id.rvTeachers).visibility = View.GONE
-        findViewById<View>(R.id.fragmentContainer).visibility = View.VISIBLE
+        val fragment = EditTeacherFragment.newInstance(teacher)
+        fragment.show(supportFragmentManager, "EditTeacherDialog")
+    }
 
-        val fragment = EditTeacherFragment(teacher) { updatedTeacher ->
-            // Update the list and refresh UI
-            val index = teachers.indexOfFirst { it.id == updatedTeacher.id }
-            if (index != -1) {
-                teachers[index] = updatedTeacher
-                adapter.notifyItemChanged(index)
+    private fun setupFragmentResultListener() {
+        supportFragmentManager.setFragmentResultListener("editTeacherRequest", this) { _, bundle ->
+            val updatedTeacher = bundle.getSerializable("updatedTeacher") as? Teacher
+            if (updatedTeacher != null) {
+                db.collection("users").document(updatedTeacher.id)
+                    .update(
+                        mapOf(
+                            "username" to updatedTeacher.name,
+                            "subject" to updatedTeacher.subject
+                        )
+                    )
+                    .addOnSuccessListener {
+                        val index = teachers.indexOfFirst { it.id == updatedTeacher.id }
+                        if (index != -1) {
+                            teachers[index] = updatedTeacher
+                            adapter.notifyItemChanged(index)
+                        }
+                        Toast.makeText(this, "Teacher updated successfully.", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Error updating teacher: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
-            // Hide fragment and show list
-            supportFragmentManager.beginTransaction()
-                .remove(supportFragmentManager.findFragmentById(R.id.fragmentContainer)!!)
-                .commit()
-            findViewById<View>(R.id.fragmentContainer).visibility = View.GONE
-            findViewById<RecyclerView>(R.id.rvTeachers).visibility = View.VISIBLE
         }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .commit()
     }
 
     private fun confirmReject(teacher: Teacher) {
@@ -116,7 +123,11 @@ class AdminTeacherManageActivity : AppCompatActivity() {
             teacherName = teacher.name,
             onSuccess = {
                 Toast.makeText(this, "${teacher.name} has been rejected.", Toast.LENGTH_SHORT).show()
-                fetchTeachers()
+                val index = teachers.indexOfFirst { it.id == teacher.id }
+                if (index != -1) {
+                    teachers.removeAt(index)
+                    adapter.notifyItemRemoved(index)
+                }
             },
             onFailure = { e ->
                 Toast.makeText(this, "Error rejecting teacher: ${e.message}", Toast.LENGTH_SHORT).show()
