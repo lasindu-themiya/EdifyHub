@@ -5,16 +5,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.google.android.material.button.MaterialButton
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.drawerlayout.widget.DrawerLayout
 import com.example.edifyhub.R
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -63,9 +63,32 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
         // Populate Spinner with streams from Firestore
         val streamList = mutableListOf<String>()
         streamList.add("Select a stream")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, streamList)
+        val adapter =
+            object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, streamList) {
+                override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
+                    val view = super.getView(position, convertView, parent)
+                    (view.findViewById<TextView>(android.R.id.text1)).setTextColor(
+                        androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
+                    )
+                    return view
+                }
+
+                override fun getDropDownView(
+                    position: Int,
+                    convertView: android.view.View?,
+                    parent: android.view.ViewGroup
+                ): android.view.View {
+                    val view = super.getDropDownView(position, convertView, parent)
+                    val textView = view.findViewById<TextView>(android.R.id.text1)
+                    textView.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                    view.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.white))
+                    return view
+                }
+            }
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerALStream.adapter = adapter
+        spinnerALStream.setBackgroundColor(resources.getColor(R.color.white, null))
+
 
         db.collection("streams")
             .get()
@@ -80,6 +103,12 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
                     db.collection("users").document(userId)
                         .get()
                         .addOnSuccessListener { userDoc ->
+                            // --- FIX: Check if activity is valid before using Glide ---
+                            if (isFinishing || isDestroyed) {
+                                return@addOnSuccessListener
+                            }
+                            // --- End of FIX ---
+
                             val currentStream = userDoc.getString("stream")
                             val index = streamList.indexOf(currentStream)
                             if (index >= 0) spinnerALStream.setSelection(index)
@@ -164,6 +193,12 @@ class StudentProfileUpdateActivity : AppCompatActivity() {
                         override fun onStart(requestId: String?) {}
                         override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
                         override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
+                            // --- FIX: Check if activity is valid before using Glide ---
+                            if (isFinishing || isDestroyed) {
+                                return
+                            }
+                            // --- End of FIX ---
+
                             val url = resultData["secure_url"] as? String
                             url?.let {
                                 profileImageUrl = it

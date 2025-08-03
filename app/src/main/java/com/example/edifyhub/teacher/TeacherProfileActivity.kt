@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -69,12 +70,43 @@ class TeacherProfileActivity : AppCompatActivity() {
         spinnerSubject = findViewById(R.id.spinnerSubject)
 
         db = FirebaseFirestore.getInstance()
-        streamAdapter = ArrayAdapter(this, R.layout.spinner_item, mutableListOf("Select Stream"))
-        streamAdapter.setDropDownViewResource(R.layout.spinner_item)
+
+        streamAdapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mutableListOf("Select Stream")) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                return view
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                view.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.white))
+                return view
+            }
+        }
+        streamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerStream.adapter = streamAdapter
 
-        subjectAdapter = ArrayAdapter(this, R.layout.spinner_item, mutableListOf("Select Subject"))
-        subjectAdapter.setDropDownViewResource(R.layout.spinner_item)
+        subjectAdapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mutableListOf("Select Subject")) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                return view
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                view.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.white))
+                return view
+            }
+        }
+        subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSubject.adapter = subjectAdapter
 
         fetchStreams()

@@ -9,12 +9,14 @@
         android:id="@+id/etTeacherName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/text_primary"
         android:hint="Name" />
 
     <EditText
         android:id="@+id/etTeacherSubject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/text_primary"
         android:hint="Subject"
         android:layout_marginTop="12dp" />
 
@@ -22,6 +24,7 @@
         android:id="@+id/etTeacherEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/text_primary"
         android:hint="Email"
         android:layout_marginTop="12dp" />
 
