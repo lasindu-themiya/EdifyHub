@@ -1,0 +1,41 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_student_dashboard"
+        android:title="Dashboard"
+        android:icon="@drawable/ic_dashboard" />
+    <item
+        android:id="@+id/nav_student_profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile" />
+
+    <item
+        android:id="@+id/nav_student_quizzes"
+        android:title="Quizzes"
+        android:icon="@drawable/ic_quiz" />
+
+    <item
+        android:id="@+id/nav_student_attempted_quizzes"
+        android:title="Attempted Quizzes"
+        android:icon="@drawable/ic_history" />
+    <item
+        android:id="@+id/nav_student_view_teachers"
+        android:title="View Teachers"
+        android:icon="@drawable/ic_teacher" />
+    <item
+        android:id="@+id/nav_create_discussion"
+        android:title="Create Discussion"
+        android:icon="@drawable/ic_discussion" />
+    <item
+        android:id="@+id/nav_open_discussions"
+        android:title="My Discussions"
+        android:icon="@drawable/ic_discussion_open" />
+    <item
+        android:id="@+id/nav_other_students_open_discussions"
+        android:title="Others' Discussions"
+        android:icon="@drawable/ic_discussion_open" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout"
+        android:icon="@drawable/ic_logout" />
+
+</menu>

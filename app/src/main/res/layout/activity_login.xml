@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:fitsSystemWindows="true"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="100dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signin"
+        android:text="Sign In"
+        android:textSize="28dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_marginTop="60dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/welcome"
+        android:text="Hi, there! Welcome Back... "
+        android:textSize="14dp"
+        android:layout_below="@id/signin"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginusername"
+        android:layout_below="@+id/welcome"
+        android:background="#30ffffff"
+        android:hint="Email"
+        android:textColorHint="@color/cardview_dark_background"
+        android:textColor="@color/surface"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:padding="15dp"
+        android:drawableLeft="@drawable/person"
+        android:drawablePadding="15dp"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginpassword"
+        android:layout_below="@+id/loginusername"
+        android:background="#30ffffff"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textColorHint="@color/cardview_dark_background"
+        android:textColor="@color/surface"
+        android:layout_margin="20dp"
+        android:padding="15dp"
+        android:drawableLeft="@drawable/lock"
+        android:drawablePadding="15dp"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordForgetContainer"
+        android:layout_below="@id/loginpassword"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/passwrodForget"
+            android:text="Forgot your password? "
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/surface"
+        />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/forgetUserPassword"
+            android:text=" Click Here"
+            android:textStyle="italic"
+            android:textColor="@color/surface"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="16sp"
+        />
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/signinbtn"
+        android:text="Sign In"
+        android:layout_below="@+id/passwordForgetContainer"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/primary"
+        android:layout_margin="40dp"
+        android:layout_marginBottom="20dp"
+        />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/or"
+            android:layout_below="@+id/signinbtn"
+            android:text="OR"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/cardview_dark_background"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/signInWith"
+            android:layout_below="@+id/or"
+            android:layout_marginTop="10dp"
+            android:text="Continue with"
+            android:gravity="center"
+            android:textColor="@color/cardview_dark_background"
+            android:textStyle="italic"
+            />
+
+        <!-- Google and GitHub login icons -->
+        <LinearLayout
+            android:id="@+id/socialLoginContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signInWith"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
+
+            <ImageView
+                android:id="@+id/googleLogin"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/google_logo"
+                android:layout_marginEnd="20dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:contentDescription="Sign in with Google"/>
+
+            <ImageView
+                android:id="@+id/githubLogin"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/github_logo"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Sign in with GitHub"/>
+        </LinearLayout>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/createAccount"
+            android:text="Don't you have an account?"
+            android:layout_marginTop="30dp"
+            android:layout_below="@id/socialLoginContainer"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/cardview_dark_background"/>
+
+        <TextView
+            android:id="@+id/signUpLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/createAccount"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text=" Signup as"
+            android:textColor="@color/text_primary"
+            />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signUp"
+        android:orientation="horizontal"
+        android:layout_below="@id/signUpLink"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:gravity="center_vertical"
+
+        >
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/teacherSignUp"
+            android:text="Teacher"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+        <Space
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/studentSignUp"
+            android:text="Student"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+
+    </LinearLayout>
+    </RelativeLayout>
+
+
+</ScrollView>
+

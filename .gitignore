@@ -21,6 +21,8 @@ build/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 
+app/src/main/AndroidManifest.xml
+
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -55,6 +57,8 @@ app/src/main/AndroidManifest.xml
 # Crashlytics
 crashlytics-build.properties
 
+app/src/main/AndroidManifest.xml
+
 # Fastlane
 fastlane/report.xml
 fastlane/Preview.html
@@ -65,3 +69,5 @@ google-services.json
 
 # Others
 .cxx/
+
+.kotlin

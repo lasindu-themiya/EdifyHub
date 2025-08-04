@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_dashboard"
+        android:title="Dashboard"
+        android:icon="@drawable/ic_dashboard" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile" />
+
+    <item
+        android:id="@+id/nav_create_quiz"
+        android:title="Create Quiz"
+        android:icon="@drawable/ic_quiz" />
+
+    <item
+        android:id="@+id/nav_schedule"
+        android:title="Schedule"
+        android:icon="@drawable/ic_schedule" />
+
+    <item
+        android:id="@+id/nav_payment_details"
+        android:title="Payment Details"
+        android:icon="@drawable/ic_card" />
+
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout"
+        android:icon="@drawable/ic_logout" />
+</menu>

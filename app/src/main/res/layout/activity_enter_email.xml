@@ -40,10 +40,10 @@
             android:layout_marginBottom="24dp"/>
 
         <Button
-            android:id="@+id/btnSendOtp"
+            android:id="@+id/btnResetPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send OTP"
+            android:text="Reset Password"
             android:backgroundTint="@color/accent"
             android:textColor="@color/background"/>
     </LinearLayout>
