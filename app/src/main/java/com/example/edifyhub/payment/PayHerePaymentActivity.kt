@@ -1,4 +1,3 @@
-// File: java/com/example/edifyhub/payment/PayHerePaymentActivity.kt
 package com.example.edifyhub.payment
 
 import android.app.Activity

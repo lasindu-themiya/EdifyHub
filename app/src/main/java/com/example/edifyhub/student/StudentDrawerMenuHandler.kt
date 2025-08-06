@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/edifyhub/student/StudentDrawerMenuHandler.kt
 import android.content.Context
 import android.content.Intent
 import android.view.MenuItem

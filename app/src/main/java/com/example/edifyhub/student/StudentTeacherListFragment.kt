@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/edifyhub/student/StudentTeacherListFragment.kt
 package com.example.edifyhub.student
 
 import android.os.Bundle

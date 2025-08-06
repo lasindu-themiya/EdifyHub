@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/edifyhub/student/OtherDiscussion.kt
 package com.example.edifyhub.student
 
 data class OtherDiscussion(
