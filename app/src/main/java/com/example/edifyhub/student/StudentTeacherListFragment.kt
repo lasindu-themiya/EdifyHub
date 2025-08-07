@@ -65,6 +65,7 @@ class StudentTeacherListFragment : Fragment() {
         val db = FirebaseFirestore.getInstance()
         db.collection("users")
             .whereEqualTo("userRole", "teacher")
+            .whereEqualTo("status", "approved")
             .get()
             .addOnSuccessListener { snapshot ->
                 val list = snapshot.documents.map { doc ->
