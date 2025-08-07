@@ -98,6 +98,7 @@ class AdminDashboardActivity : AppCompatActivity() {
 
                 val teacherDocs = db.collection("users")
                     .whereEqualTo("userRole", "teacher")
+                    .whereEqualTo("status", "approved")
                     .get()
                     .await()
 
