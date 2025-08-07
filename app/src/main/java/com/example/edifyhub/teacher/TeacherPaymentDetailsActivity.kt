@@ -89,6 +89,7 @@ class TeacherPaymentDetailsActivity : AppCompatActivity() {
                     Toast.makeText(this, "Details saved", Toast.LENGTH_SHORT).show()
                     finish()
                     val intent = Intent(this, TeacherDashboardActivity::class.java)
+                    intent.putExtra("USER_ID", userId)
                     startActivity(intent)
                 }
                 .addOnFailureListener { e ->
