@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">EdifyHub</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open navigation</string>
+    <string name="navigation_drawer_close">Close navigation</string>
+    <string name="user_avatar">User profile picture</string>
+    <string name="default_web_client_id">113772520495-csh6a83rijna811n5ivpmufekitka0i1.apps.googleusercontent.com</string>
+    <string name="discussion_image">Discussion image</string>
+
 </resources>

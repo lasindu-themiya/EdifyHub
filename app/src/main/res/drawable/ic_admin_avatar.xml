@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- Head (circle as path) -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M32,8
+            a14,14 0 1,0 0.01,0" />
+    <!-- Shoulders/Body -->
+    <path
+        android:fillColor="#FFA726"
+        android:pathData="M12,54c0,-10.5 40,-10.5 40,0v6H12v-6z"/>
+    <!-- Tie (admin touch) -->
+    <path
+        android:fillColor="#D84315"
+        android:pathData="M30,36h4l-2,10z"/>
+</vector>

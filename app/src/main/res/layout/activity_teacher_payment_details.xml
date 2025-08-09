@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/teacherDrawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface"
+    android:fitsSystemWindows="true">
+
+    <!-- Main content -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:padding="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/teacherToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:title="Payment Details"
+            android:titleTextColor="@color/text_primary" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Payment Details"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary"
+            android:layout_marginTop="30dp" />
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="24dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:cardBackgroundColor="@color/background"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="32dp">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="24dp"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bank Account Details"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary"
+                            android:layout_marginBottom="16dp" />
+
+                        <EditText
+                            android:id="@+id/etAccountHolder"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:backgroundTint="@color/text_primary"
+                            android:hint="Account Holder Name"
+                            android:textColorHint="@color/text_primary"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <EditText
+                            android:id="@+id/etAccountNo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:backgroundTint="@color/text_primary"
+                            android:hint="Account Number"
+                            android:textColorHint="@color/text_primary"
+                            android:inputType="number"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <EditText
+                            android:id="@+id/etBankName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:backgroundTint="@color/text_primary"
+                            android:hint="Bank Name"
+                            android:textColorHint="@color/text_primary"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <EditText
+                            android:id="@+id/etBranchName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:backgroundTint="@color/text_primary"
+                            android:hint="Branch Name"
+                            android:textColorHint="@color/text_primary"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="16dp"/>
+
+                        <Button
+                            android:id="@+id/btnSave"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Save Details"
+                            android:textColor="@color/text_primary"
+                            android:backgroundTint="@color/primary"
+                            android:layout_marginTop="24dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/surface"
+        android:fitsSystemWindows="true"
+        app:itemTextColor="@color/text_primary"
+        app:itemIconTint="@color/text_primary"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/teacher_drawer_menu" />
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -52,8 +52,12 @@ captures/
 # NDK
 obj/
 
+app/src/main/AndroidManifest.xml
+
 # Crashlytics
 crashlytics-build.properties
+
+app/src/main/AndroidManifest.xml
 
 # Fastlane
 fastlane/report.xml
@@ -65,3 +69,5 @@ google-services.json
 
 # Others
 .cxx/
+
+.kotlin
