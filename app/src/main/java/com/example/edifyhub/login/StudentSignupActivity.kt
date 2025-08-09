@@ -24,15 +24,15 @@ class StudentSignupActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        // ✅ Fetch Streams from Firestore dynamically
+        // Fetch Streams from Firestore dynamically
         db.collection("streams")
             .get()
             .addOnSuccessListener { result ->
                 val streamList = mutableListOf<String>()
-                streamList.add("Select a stream") // optional default
+                streamList.add("Select a stream")
 
                 for (document in result) {
-                    streamList.add(document.id) // your stream name is the doc ID
+                    streamList.add(document.id)
                 }
 
                 val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, streamList)

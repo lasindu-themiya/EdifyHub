@@ -28,7 +28,7 @@ class TeacherSignupActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        // ✅ Empty adapters with default
+        // Empty adapters with default
         streamAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, mutableListOf("Select Stream"))
         streamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.stream.adapter = streamAdapter
@@ -37,10 +37,10 @@ class TeacherSignupActivity : AppCompatActivity() {
         subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.subject.adapter = subjectAdapter
 
-        // ✅ Fetch Streams first
+        // Fetch Streams first
         fetchStreams()
 
-        // ✅ When stream selected -> fetch subjects (array field!)
+        // When stream selected -> fetch subjects (array field!)
         binding.stream.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedStream = parent.getItemAtPosition(position).toString()
@@ -55,7 +55,7 @@ class TeacherSignupActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        // ✅ Signup button
+        // Signup button
         binding.teachersignupbtn.setOnClickListener {
             val username = binding.teacherusername.text.toString()
             val about = binding.teacherabout.text.toString()
@@ -114,14 +114,14 @@ class TeacherSignupActivity : AppCompatActivity() {
             }
         }
 
-        // ✅ Sign in link
+        // Sign in link
         binding.signInLink.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }
 
-    // ✅ Uses your array field!
+    // Uses your array field!
     private fun fetchStreams() {
         db.collection("streams").get()
             .addOnSuccessListener { result ->
@@ -138,7 +138,7 @@ class TeacherSignupActivity : AppCompatActivity() {
             }
     }
 
-    // ✅ Uses array field instead of subcollection
+    // Uses array field instead of subcollection
     private fun fetchSubjects(stream: String) {
         db.collection("streams").document(stream).get()
             .addOnSuccessListener { doc ->
